@@ -1,0 +1,57 @@
+{% extends "edc_dashboard/listboard.html" %}
+{% load admin_urls %}
+{% load edc_base_extras %}
+{% load procurement_dashboard_extras %}
+
+             
+{% block listboard_panel %}
+    <a id="purchaseorder_add" title="add purchase order" class="btn btn-sm btn-default" role="button" 
+        href="{{ purchase_order_add_url }}?next={{ purchase_order_listboard_url }}">
+            <i class="fa fa-plus fa-sm"></i> Add Purchase Order
+    </a>
+    <a id="return_to_home" title="go back" class="btn btn-sm btn-default" role="button" 
+        href="/">
+            <i class="fa fa-arrow-left fa-sm"></i> Go Back
+    </a>
+{% endblock listboard_panel %}
+
+
+{% block listboard_table_header %}
+    <!-- begin results header -->
+    <th>#</th>
+    <th></th>
+    <th>Vendor</th>
+    <th>Order Number</th>
+    <th>Order Date</th>
+    <th>Agent</th>
+    <th>BHP Allocation</th>
+    <th>Total</th>
+    <th></th>
+    <!-- end results header -->
+{% endblock listboard_table_header %}
+
+
+{% block listboard_table_button_column %}
+    <td style="white-space: nowrap">
+    <div class="btn-group">
+ 		{% purchase_order_button result %}
+ 		<a id="btn-dashboard" class="btn btn-success btn-sm" role="button"
+     		title="Generate PDF" href="{% url purchase_order_report_url result.order_number %}">
+     		<i class="fa fa-file-pdf"></i> Generate PDF <i class="fa fa-download"></i>
+     	</a>
+    
+    </div>
+    </td>
+    
+{% endblock listboard_table_button_column %}
+
+
+{% block listboard_table_columns %}
+    <td>{{result.object.vendor.name}}</td>
+    <td nowrap>{{result.order_number}}</td>
+    <td nowrap>{{result.order_date}}</td>
+    <td nowrap>{{result.object.agent.first_name}} {{result.object.agent.last_name}}</td>
+    <td nowrap>{{result.object.bhp_allocation.name}}</td>
+    <td nowrap><b>P</b> {{result.purchase_order_total}}</td>
+
+{% endblock listboard_table_columns %}

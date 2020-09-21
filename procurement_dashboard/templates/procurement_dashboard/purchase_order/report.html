@@ -1,0 +1,131 @@
+{% load static %}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Purchase Order</title>
+    <link type="text/css" rel="stylesheet" href="{% static 'procurement_dashboard/css/report.css' %}">
+</head>
+
+<body>
+    <div class="order-box">
+    	<div>
+    		<span>
+    			Sparksuite, Inc.<br>
+                12345 Sunny Road<br>
+                Sunnyville, CA 12345s
+    		</span>
+    		<span>
+    			Acme Corp.<br>
+                John Doe<br>
+                john@example.com
+    		</span>
+    	</div>
+        <table cellpadding="0" cellspacing="0">
+            <tr class="top">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td class="title">
+                                <img src="{% static 'procurement_dashboard/images/logo.png' %}" style="width:100%; max-width:300px;">
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr> 
+              
+            <tr class="information">
+                <td colspan="2">
+                    <table>
+                        <tr>
+                           	<td>
+                           		<span>
+                           		Sparksuite, Inc.<br>
+                               	12345 Sunny Road<br>
+                               	Sunnyville, CA 12345s
+                           		</span>
+                           	</td>
+                     
+                            <td style="border:none"></td>
+                            <td>
+                                Acme Corp.<br>
+                                John Doe<br>
+                                john@example.com
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            
+            <tr class="heading">
+                <td>
+                    Payment Method
+                </td>
+                
+                <td>
+                    Check #
+                </td>
+            </tr>
+            
+            <tr class="details">
+                <td>
+                    Check
+                </td>
+                
+                <td>
+                    1000
+                </td>
+            </tr>
+            
+            <tr class="heading">
+                <td>
+                    Item
+                </td>
+                
+                <td>
+                    Price
+                </td>
+            </tr>
+            
+            <tr class="item">
+                <td>
+                    Website design
+                </td>
+                
+                <td>
+                    $300.00
+                </td>
+            </tr>
+            
+            <tr class="item">
+                <td>
+                    Hosting (3 months)
+                </td>
+                
+                <td>
+                    $75.00
+                </td>
+            </tr>
+            
+            <tr class="item last">
+                <td>
+                    Domain name (1 year)
+                </td>
+                
+                <td>
+                    $10.00
+                </td>
+            </tr>
+            
+            <tr class="total">
+                <td></td>
+                
+                <td>
+                   Total: $385.00
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
