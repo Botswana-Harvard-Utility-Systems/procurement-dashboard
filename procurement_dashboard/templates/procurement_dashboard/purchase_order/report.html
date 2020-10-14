@@ -1,131 +1,211 @@
 {% load static %}
 
-<!doctype html>
-<html>
-<head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <title>Purchase Order</title>
     <link type="text/css" rel="stylesheet" href="{% static 'procurement_dashboard/css/report.css' %}">
-</head>
-
-<body>
-    <div class="order-box">
-    	<div>
-    		<span>
-    			Sparksuite, Inc.<br>
-                12345 Sunny Road<br>
-                Sunnyville, CA 12345s
-    		</span>
-    		<span>
-    			Acme Corp.<br>
-                John Doe<br>
-                john@example.com
-    		</span>
-    	</div>
-        <table cellpadding="0" cellspacing="0">
-            <tr class="top">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td class="title">
-                                <img src="{% static 'procurement_dashboard/images/logo.png' %}" style="width:100%; max-width:300px;">
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr> 
-              
-            <tr class="information">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                           	<td>
-                           		<span>
-                           		Sparksuite, Inc.<br>
-                               	12345 Sunny Road<br>
-                               	Sunnyville, CA 12345s
-                           		</span>
-                           	</td>
-                     
-                            <td style="border:none"></td>
-                            <td>
-                                Acme Corp.<br>
-                                John Doe<br>
-                                john@example.com
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            
-            <tr class="heading">
-                <td>
-                    Payment Method
-                </td>
-                
-                <td>
-                    Check #
-                </td>
-            </tr>
-            
-            <tr class="details">
-                <td>
-                    Check
-                </td>
-                
-                <td>
-                    1000
-                </td>
-            </tr>
-            
-            <tr class="heading">
-                <td>
-                    Item
-                </td>
-                
-                <td>
-                    Price
-                </td>
-            </tr>
-            
-            <tr class="item">
-                <td>
-                    Website design
-                </td>
-                
-                <td>
-                    $300.00
-                </td>
-            </tr>
-            
-            <tr class="item">
-                <td>
-                    Hosting (3 months)
-                </td>
-                
-                <td>
-                    $75.00
-                </td>
-            </tr>
-            
-            <tr class="item last">
-                <td>
-                    Domain name (1 year)
-                </td>
-                
-                <td>
-                    $10.00
-                </td>
-            </tr>
-            
-            <tr class="total">
-                <td></td>
-                
-                <td>
-                   Total: $385.00
-                </td>
-            </tr>
-        </table>
+  </head>
+  <body>
+  <div id="footer_datetime">
+  		{% now "SHORT_DATETIME_FORMAT" %}
     </div>
-</body>
+  	<div id="footer_pages">
+  		Page <pdf:pagenumber> of <pdf:pagecount>
+    </div>
+    <div id="footer_signatures">
+  		<table>
+  			<tr>
+  				<td>Prepared by :</td>
+  				<td>______________</td>
+  				<td>Authorised by (1) :</td>
+  				<td>______________</td>
+  				<td>Authorised by (2) :</td>
+  				<td>______________</td>
+  			</tr>
+  			<tr>
+  				<td>Date :</td>
+  				<td>______________</td>
+  				<td>Date :</td>
+  				<td>______________</td>
+  				<td>Date :</td>
+  				<td>______________</td>
+  			</tr>
+  			<tr>
+  				<td>Signature :</td>
+  				<td>______________</td>
+  				<td>Signature :</td>
+  				<td>______________</td>
+  				<td>Signature :</td>
+  				<td>______________</td>
+  			</tr>
+  		</table>
+    </div>
+    <header class="clearfix">
+    	<h1>Purchase Order</h1>
+      	<div id="logo">
+        	<img src="{% static 'procurement_dashboard/images/logo.png' %}">
+      	</div>
+      	<table class="header-info">
+      		<tr>
+      			<td>
+			      	<table>
+			      		<tr><td>{{result.company.address.postal_address}}</td></tr>
+				      	<tr>
+				      		<td>
+				      			<p>Telephone</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>+267{{result.company.address.telephone_contacts}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Fax</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>+267{{result.company.address.fax}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Tax Registration</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>{{result.company.tax_registration}}</p>
+				      		</td>
+				      	</tr>
+				      </table>
+      			</td>
+      			<td class="separator"></td>
+      			<td>
+      				<table>
+				      	<tr>
+				      		<td class="trailing-value">
+				      			<p>{{result.vendor.name}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>{{result.vendor.address.postal_address}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Contact Person</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>{{result.vendor.contact_person}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Telephone</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>+267{{result.vendor.address.telephone_contacts}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Email</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<a href="mailto:{{result.vendor.email}}">{{result.vendor.address.email}}</a>
+				      		</td>
+				      	</tr>
+				      </table>
+      			</td>
+      		</tr>
+      	</table>
+      	<table class="instructions">
+      		<tr>
+      			<td style="width:75%">PLEASE SUPPLY THE FOLLOWING ITEMS AS PER YOUR QUOTATION:</td>
+      			<td></td>
+      			<td>AGENT: {{result.agent|capfirst}}</td>
+      		</tr>
+      	</table>
+    </header>
+    <main>
+    	<table class="main-header">
+    		<thead>
+	   			<tr style="font-weight:bold;">
+	   				<td>Supplier Reference</td>
+	   				<td class="separator"></td>
+	   				<td>Date</td>
+	   				<td class="separator"></td>
+	   				<td>Order Number</td>
+	   			</tr>
+   			</thead>
+   			<tbody>
+   				<tr>
+	   				<td>{{result.vendor.name}}</td>
+	   				<td class="separator"></td>
+	   				<td>{% now "SHORT_DATE_FORMAT" %}</td>
+	   				<td class="separator"></td>
+	   				<td>{{order_number}}</td>
+	   			</tr>
+   			</tbody>
+    	</table>
+      	<table>
+	        <thead>
+	          <tr>
+	            <th class="catalog">Catalog</th>
+	            <th class="desc">Description</th>
+	            <th class="code">Item Code</th>
+	            <th>Ordered</th>
+	            <th>Price(Ex)</th>
+	            <th class="disc">Disc %</th>
+	            <th>Vat</th>
+	            <th>Total(Incl)</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	{% for order_item in model_obj_set %}
+        		<tr>
+		            <td colspan="2" class="desc">{{order_item.description}}</td>
+		            <td class="code">{{order_item.item_code}}</td>
+		            <td class="qty">{{order_item.quantity_ordered}}</td>
+		            <td class="price">{{order_item.unit_price}}</td>
+		            <td></td>
+		            <td class="price">{{order_item.vat}}</td>
+		            <td class="price">{{order_item.total_price_incl}}</td>
+		         </tr>
+	        	{% endfor %}
+	          <tr style="border-top:1px solid #111; padding-top:10px">
+	            <td colspan="5"><b>BHP Allocation:</b> {{result.bhp_allocation}}</td>
+	            <td colspan="2">Total (Excl)</td>
+	            <td align="center">{{overall_sum_excl|floatformat:2}}</td>
+	          </tr>
+	          <tr>
+	            <td colspan="5"></td>
+	            <td colspan="2">Vat</td>
+	            <td align="center">{{vat|floatformat:2}}</td>
+	          </tr>
+	          <tr>
+	            <td colspan="5"></td>
+	            <td colspan="2"><b>Total (Incl)</b></td>
+	            <td align="center"><b>{{overall_sum_incl|floatformat:2}}</b></td>
+	          </tr>
+	          <tr>
+	            <td colspan="5"></td>
+	            <td colspan="2">Discount</td>
+	            <td align="center">{{overall_disc|floatformat:2}}</td>
+	          </tr>
+	          <tr style="border-bottom:1px solid #111">
+	            <td colspan="5" class="terms">
+	            	Payment Terms: Buyer will pay the undisputed invoices in thirty (30) days
+	            	from date of receipt of the invoice.
+	            </td>
+	            <td colspan="2" style="border-top:1px solid #111"><b>Total (Incl)</b></td>
+	            <td align="center" style="border-top:1px solid #111"><b>{{overall_sum_incl|floatformat:2}}</td>
+	          </tr>
+	        </tbody>
+	     </table>
+    </main>
+    <footer>
+    	
+    </footer>
+  </body>
 </html>

@@ -1,0 +1,153 @@
+{% extends 'edc_base/base.html' %}
+{% load static %}
+
+{% block extra-styles %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+
+<style>
+	.doc-btns div {
+		margin-right: 100px
+	}
+	.p-4 {
+    padding: 1.5rem !important;
+	}
+	.mb-4, .my-4 {
+    margin-bottom: 1.5rem !important;
+	}
+	.mt-4, .my-4 {
+	    margin-top: 1.5rem !important;
+	}
+	.mb-2, .my-2 {
+    margin-bottom: .5rem !important;
+	}
+	.mt-2, .my-2 {
+	    margin-top: .5rem !important;
+	}
+	.card {
+	    position: relative;
+	    display: -ms-flexbox;
+	    display: flex;
+	    -ms-flex-direction: column;
+	    flex-direction: column;
+	    min-width: 0;
+	    word-wrap: break-word;
+	    background-color: #fff;
+	    background-clip: border-box;
+	    border: 1px solid rgba(0,0,0,.125);
+	    border-radius: .25rem;
+	}
+	.report {
+    width: 210.0mm;
+    height: 297.0mm;
+	}
+	.report {
+	    background: white;
+	    box-shadow: 0 0 0.2cm rgba(0,0,0,0.2);
+	    margin: 5mm auto;
+	    padding: 0 !important;
+	}
+	.report {
+	    overflow: hidden;
+	    position: relative;
+	    box-sizing: border-box;
+	    font-family: Tahoma sans-serif;
+	    font-size: 9pt;
+	}
+</style>
+{% endblock extra-styles %}
+{% block extra-scripts %}
+	<script type="text/javascript" charset="utf8" src="{% static "procurement_dashboard/js/utils.js" %}"></script>
+{% endblock %}
+
+{% block main %}
+	
+<div class="container">
+	<div class="card row my-4 p-4">
+		<table class="table table-sm table-condensed small my-4">
+			<thead>
+				<tr>
+					<th>Order Number</th>
+					<th>Order Date</th>
+					<th>Vendor</th>
+					<th>Agent</th>
+					<th>BHP Allocation</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{order_number}}</td>
+					<td>{{result.order_date}}</td>
+					<td>{{result.vendor.name}}</td>
+					<td>{{result.agent|capfirst}}</td>
+					<td>{{result.bhp_allocation}}</td>
+					<td>Not Paid</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="row" id="report-controller">
+			<div class="col-sm-12">
+				<div class="d-inline-block">
+					<a class="btn btn-info btn-sm" id="download">
+						<i class="fa fa-download" aria-hidden="true"></i> Download
+					</a>
+					<button type="button" class="btn btn-info btn-sm" id="email" data-toggle="modal" data-target="#emailModal">
+						<i class="fa fa-envelope" aria-hidden="true"></i> Email
+					</button>
+					<a class="btn btn-info btn-sm" id="print">
+						<i class="fa fa-print" aria-hidden="true"></i> Print
+					</a>
+				</div>
+			</div>
+		</div>
+		<hr />
+		<div class="row" id="reports">
+			{% if pdf_images_bytes %}
+				{% for pdf_image_bytes in pdf_images_bytes %}
+					<div class="report">
+						<img src="data:image/png;base64,{{pdf_image_bytes}}" width='794px' height='1123px'></img>
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+	
+	<!-- Email Modal -->
+	<div id="emailModal" class="modal fade" role="dialog">
+	  	<div class="modal-dialog">
+	
+	    <!-- content-->
+	    <div class="modal-content">
+	    	<div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        </div>
+        	<div class="modal-body">
+				<form action=""  method="post" id="email-form">
+					{% csrf_token %}
+		            <div class="form-group col-md-12">
+						<input name="sender_email" class="form-control" value="" placeholder="From" required />
+		            </div>
+		            <div class="form-group col-md-12">
+						<input name="recipient_email" class="form-control" value="" placeholder="To" />
+		            </div>
+		            <div class="form-group col-md-12">
+						<input name="subject" class="form-control" value="Purchase Order #{{order_number}}" placeholder="Subject" />
+		            </div>
+		            <div class="form-group col-md-12">
+						<textarea name="message" class="form-control" value="" placeholder="Message" ></textarea>
+		            </div>
+	            	<div class="clearfix"></div>
+            	</form>
+        	</div>
+        	<div class="modal-footer">
+            	<button type="submit" class="btn btn-success" >Email</button>
+            	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        	</div>
+	   </div>
+	 </div>
+	</div>
+</div>
+
+
+
+{% endblock main %}

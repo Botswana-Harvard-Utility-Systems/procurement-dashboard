@@ -1,10 +1,12 @@
-from django.conf import settings
-from django.contrib.staticfiles import finders
 import os
 import posixpath
-from io import BytesIO
-from django.http import HttpResponse
+from django.conf import settings
+from django.contrib.staticfiles import finders
+from django.core.mail import send_mail
+from django.shortcuts import redirect
 from django.template.loader import get_template
+from io import BytesIO
+from procurement.forms import ReportEmailForm
 
 from xhtml2pdf import pisa
 
@@ -43,30 +45,50 @@ def fetch_resources(uri, rel):
                     break
     else:
         raise UnsupportedMediaPathException(
-                                'media urls must start with %s or %s' % (
-                                settings.MEDIA_URL, settings.STATIC_URL))
+            'media urls must start with %s or %s' % (settings.MEDIA_URL, settings.STATIC_URL))
     return path
 
 
 def generate_pdf(
-        template_src, file_object=None, context_dict=None, link_callback=fetch_resources):
+        template_src, output_filename=None, context_dict=None, link_callback=fetch_resources):
     """
         Uses the xhtml2pdf library to render a PDF to the passed file_object,
         from the given template name.
         @return: passed-in file object, filled with the actual PDF data.
         In case the passed in file object is none, it will return a BytesIO instance.
     """
-    if not file_object:
-        file_object = BytesIO()
+    # open output file for writing (truncated binary)
+    result_file = open(output_filename, "w+b")
+
     if not context_dict:
         context_dict = {}
+
     template = get_template(template_src)
 
-    html = template.render(context_dict)
+    source_html = template.render(context_dict)
+    # convert HTML to PDF
+    pisa_status = pisa.CreatePDF(
+            BytesIO(source_html.encode("ISO-8859-1")),
+            dest=result_file,
+            link_callback=link_callback)
 
-    pdf = pisa.pisaDocument(
-        BytesIO(html.encode("ISO-8859-1")), file_object, link_callback=link_callback)
-    if not pdf.err:
-        return HttpResponse(
-            file_object.getvalue(), content_type='application/pdf')
-    return None
+    # close output file
+    result_file.close()
+
+    return pisa_status.err
+
+
+def email_report(request):
+    if request.method == 'POST':
+        report_email_form = ReportEmailForm(request.POST)
+
+        if report_email_form.is_valid():
+            sender_email = report_email_form.cleaned_data['sender_email']
+            recipient_email = report_email_form.cleaned_data['recipient_email']
+            subject = report_email_form.cleaned_data['subject']
+            message = report_email_form.cleaned_data['message']
+
+            if recipient_email and sender_email:
+                send_mail(subject, message, sender_email, recipient_email)
+                report_email_form.save()
+                return redirect('purchase_order_report_url')

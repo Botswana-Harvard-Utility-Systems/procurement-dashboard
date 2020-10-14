@@ -139,6 +139,7 @@ STATIC_URL = '/static/'
 
 DASHBOARD_URL_NAMES = {
     'procurement_url': 'procurement_dashboard:procurement_url',
+    'purchase_order_dashboard_url': 'procurement_dashboard:purchase_order_dashboard_url',
     'purchase_order_listboard_url': 'procurement_dashboard:purchase_order_listboard_url',
     'purchase_order_report_url': 'procurement_dashboard:purchase_order_report_url'
 }

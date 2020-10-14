@@ -1,100 +1,171 @@
-.order-box {
-    max-width: 800px;
-    margin: auto;
-    padding: 30px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .15);
-    font-size: 16px;
-    line-height: 24px;
-    font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
-    color: #555;
-}
-
-.order-box div span {
-	display: inline-block;
-}
-
-.order-box table {
-    width: 100%;
-    line-height: inherit;
-    text-align: left;
-}
-
-.order-box table td {
-    padding: 5px;
-    vertical-align: top;
-}
-
-.order-box table tr td:nth-child(2) {
-    text-align: right;
-}
-
-.order-box table tr.top table td {
-    padding-bottom: 20px;
-}
-
-.order-box table tr.top table td.title {
-    font-size: 45px;
-    line-height: 45px;
-    color: #333;
-}
-
-.order-box table tr.information table tr > td > span {
-	border:1px solid black;
-}
-
-.order-box table tr.information table tr:first-child td:first-child {
-    padding: 10px;
-    border: 1px solid black;
-    border-radius: 25px;
-}
-
-.order-box table tr.heading td {
-    background: #eee;
-    border-bottom: 1px solid #ddd;
-    font-weight: bold;
-}
-
-.order-box table tr.details td {
-    padding-bottom: 20px;
-}
-
-.order-box table tr.item td{
-    border-bottom: 1px solid #eee;
-}
-
-.order-box table tr.item.last td {
-    border-bottom: none;
-}
-
-.order-box table tr.total td:nth-child(2) {
-    border-top: 2px solid #eee;
-    font-weight: bold;
-}
-
-@media only screen and (max-width: 600px) {
-    .order-box table tr.top table td {
-        width: 100%;
-        display: block;
-        text-align: center;
+@page {
+    size: a4 portrait;
+    @frame content_frame {          /* Content Frame */
+        left: 50pt; width: 512pt; top: 30pt; height: 632pt;
     }
-    
-    .order-box table tr.information table td {
-        width: 100%;
-        display: block;
-        text-align: center;
+    @frame footer_frame {           /* Another static Frame */
+        -pdf-frame-content: footer_signatures;
+        left: 50pt; width: 512pt; top: 690pt; height: 70pt;
+    }
+    @frame footer_frame {           /* Another static Frame */
+        -pdf-frame-content: footer_pages;
+        left: 50pt; width: 256pt; top: 772pt; height: 20pt;
+    }
+    @frame footer_frame {
+    	-pdf-frame-content: footer_datetime;
+    	left: 475pt; width: 256pt; top: 772pt; height: 20pt;
     }
 }
 
-/** RTL **/
-.rtl {
-    direction: rtl;
-    font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
-.rtl table {
-    text-align: right;
+a {
+  color: #5D6975;
+  text-decoration: underline;
 }
 
-.rtl table tr td:nth-child(2) {
-    text-align: left;
+body {
+  position: relative;
+  margin: 0 auto; 
+  color: #001028;
+  background: #FFFFFF; 
+  font-family: Arial, sans-serif; 
+  font-size: 13px; 
+}
+
+#logo {
+  margin-bottom: 10px;
+}
+
+#logo img {
+	object-fit: cover;
+ 	max-width:300px;
+  	height:100px;
+}
+
+h1 {
+  color: #5D6975;
+  font-size: 2.4em;
+  line-height: 1.2em;
+  font-weight: normal;
+  text-align: center;
+  margin: 0 0 10px 0;
+}
+
+.header-info {
+	margin-bottom: 30px;
+}
+
+.header-info tr td {
+	background-color: #f9f9f9;
+}
+
+table tr td.separator {
+	background-color: #fff;
+	padding-left: 50px;
+}
+
+.header-info tr td table tr td {
+	/* font-size: 14px; */
+	padding:1.5px;
+}
+
+.header-info tr td table tr td.trailing-value {
+	font-weight: bold;
+}
+
+.instructions tr {
+	background-color: #f9f9f9;
+}
+
+.instructions tr td {
+	font-weight: bold;
+	padding: 2px;
+	padding-top: 4px;
+}
+
+.main-header tr {
+	text-align: center;
+}
+
+
+.main-header tr td {
+	padding: 2px;
+	margin: 0px;
+}
+
+.main-header tbody tr td {
+	background-color: #f9f9f9;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 10px;
+}
+
+table tr:nth-child(2n-1) td {
+  background: #F5F5F5;
+}
+
+main table tbody tr {
+	padding-top: 1.2px;
+}
+
+main table tbody tr td:last-child {
+	text-align: center;
+}
+
+table th {
+  padding: none;
+  color: #5D6975;
+  border-bottom: 1px solid #C1CED9;
+  white-space: nowrap;        
+  font-weight: 500;
+}
+
+table th.catalog, table th.desc {
+	width: 140px;
+	text-align: left;
+}
+
+table th.code {
+	width: 100px;
+	text-align: left;
+}
+
+table th.disc {
+	width: 50px;
+}
+
+table td.terms {
+	font-size: 11px;
+	font-weight: 400;
+	color: #5D6975;
+}
+
+table td.qty, table td.price {
+  	text-align: center;
+}
+
+#footer_signatures table tr td {
+	padding-bottom: 1px;
+}
+
+#footer_datetime, #footer_pages {
+	font-size: 11px;
+}
+
+footer {
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  padding: 8px 0;
+  text-align: center;
 }
