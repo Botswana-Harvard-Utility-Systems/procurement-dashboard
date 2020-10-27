@@ -56,7 +56,48 @@
 </style>
 {% endblock extra-styles %}
 {% block extra-scripts %}
-	<script type="text/javascript" charset="utf8" src="{% static "procurement_dashboard/js/utils.js" %}"></script>
+	<script type="text/javascript" charset="utf8">
+		function formAjaxSubmit(modal, action, cbAfterLoad, cbAfterSuccess) {
+			var form = modal.find('.modal-body form');
+			var header = $(modal).find('.modal-header');
+	
+			var btn_save = modal.find('.modal-footer .btn-save');
+			if (btn_save) {
+				btn_save.off().on('click', function(e) {
+					modal.find('.modal-bosy form').submit();
+				});
+			}
+	
+			if (cbAfterLoad) { cbAfterLoad(modal); }
+			
+			modal.find('form input:visible').first().focus();
+	
+			$(form).on('submit', function(e) {
+				e.preventDefault();
+	
+				var url = $(this).attr('action') || action;
+	
+				$.ajax({
+					type: $(this).attr('method'),
+					url: url,
+					data: $(this).serialize(),
+					success: function(xhr, ajaxOptions, thrownError) {
+	
+						$(modal).find('.modal-body').html(xhr);
+	
+						if ($(xhr).find('.has-error').length > 0) {
+							formAjaxSubmit(modal, url, cbAfterLoad, cbAfterSuccess);
+						} else {
+							$(modal).modal('hide');
+							if (cbAfterSuccess) { cbAfterSuccess(modal); }
+						}
+					},
+					error: function(xhr, ajaxOptions, thrownError) {
+					}
+				});
+			});
+		}
+	</script>
 {% endblock %}
 
 {% block main %}
@@ -88,7 +129,7 @@
 		<div class="row" id="report-controller">
 			<div class="col-sm-12">
 				<div class="d-inline-block">
-					<a class="btn btn-info btn-sm" id="download">
+					<a class="btn btn-info btn-sm" id="download" href="{{result.file.url}}" download="{{result.file.url}}">
 						<i class="fa fa-download" aria-hidden="true"></i> Download
 					</a>
 					<button type="button" class="btn btn-info btn-sm" id="email" data-toggle="modal" data-target="#emailModal">
@@ -121,28 +162,31 @@
 	    	<div class="modal-header">
 	            <button type="button" class="close" data-dismiss="modal">&times;</button>
 	        </div>
-        	<div class="modal-body">
-				<form action=""  method="post" id="email-form">
+	        <form action="{% url email_report_url %}"  method="post" id="email-form">
+				<div class="modal-body">
 					{% csrf_token %}
 		            <div class="form-group col-md-12">
-						<input name="sender_email" class="form-control" value="" placeholder="From" required />
+						<input name="sender_email" type="email" class="form-control" value="{{result.company.address.email}}" placeholder="From" required />
 		            </div>
 		            <div class="form-group col-md-12">
-						<input name="recipient_email" class="form-control" value="" placeholder="To" />
+						<input name="recipient_email" type="email" class="form-control" value="" placeholder="To" required />
 		            </div>
 		            <div class="form-group col-md-12">
-						<input name="subject" class="form-control" value="Purchase Order #{{order_number}}" placeholder="Subject" />
+						<input name="subject" type="text" class="form-control" value="Purchase Order #{{order_number}}" placeholder="Subject" required />
 		            </div>
 		            <div class="form-group col-md-12">
-						<textarea name="message" class="form-control" value="" placeholder="Message" ></textarea>
+						<textarea name="message" type="textarea" class="form-control" placeholder="Message" required></textarea>
+		            </div>
+		            <div class="form-group col-md-12">
+		            	<i class="fa fa-paperclip" aria-hidden="true"></i> <a href="{{result.file.url}}">{{result.file.name}}</a>
 		            </div>
 	            	<div class="clearfix"></div>
-            	</form>
-        	</div>
-        	<div class="modal-footer">
-            	<button type="submit" class="btn btn-success" >Email</button>
-            	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        	</div>
+	        	</div>
+	        	<div class="modal-footer">
+	            	<input type="submit" class="btn btn-success" id="email-button" value="Email" />
+	            	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        	</div>
+	        </form>
 	   </div>
 	 </div>
 	</div>

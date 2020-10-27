@@ -1,0 +1,12 @@
+<a id="requestapproval_add_{{ subject_identifier }}" 
+     title="{{ title }}"
+     
+     {% if antenatal_enrollment_model_obj%}
+            class="btn btn-success btn-sm" data-toggle="tooltip"  data-placement="right"
+            href="{{ add_request_approval_href }}">
+        {% else %}
+            class="btn btn-warning btn-sm" data-toggle="tooltip"  data-placement="right"
+            href="{{ add_request_approval_href }}">
+        {% endif %}
+         Request Approval
+</a>

@@ -5,7 +5,7 @@ function formAjaxSubmit(modal, action, cbAfterLoad, cbAfterSuccess) {
 	var btn-save = modal.find('.modal-footer .btn-save');
 	if (btn-save) {
 		btn-save.off().on('click', function(e) {
-			modal.find('.modal-body form').submit();
+			modal.find('.modal-bosy form').submit();
 		});
 	}
 
@@ -26,7 +26,7 @@ function formAjaxSubmit(modal, action, cbAfterLoad, cbAfterSuccess) {
 
 				$(modal).find('.modal-body').html(xhr);
 
-				if ($(xhr).find('.hasd-error').length > 0) {
+				if ($(xhr).find('.has-error').length > 0) {
 					formAjaxSubmit(modal, url, cbAfterLoad, cbAfterSuccess);
 				} else {
 					$(modal).modal('hide');

@@ -1,0 +1,54 @@
+{% extends "edc_dashboard/listboard.html" %}
+{% load admin_urls %}
+{% load edc_base_extras %}
+{% load procurement_dashboard_extras %}
+
+             
+{% block listboard_panel %}
+    <a id="purchasereq_add" title="add purchase requisition" class="btn btn-sm btn-default" role="button" 
+        href="{{ purchase_req_add_url }}?next={{ purchase_req_listboard_url }}">
+            <i class="fa fa-plus fa-sm"></i> Add Purchase Requisition
+    </a>
+    <a id="return_to_home" title="go back" class="btn btn-sm btn-default" role="button" 
+        href="/">
+            <i class="fa fa-arrow-left fa-sm"></i> Go Back
+    </a>
+{% endblock listboard_panel %}
+
+
+{% block listboard_table_header %}
+    <!-- begin results header -->
+    <th>#</th>
+    <th></th>
+    <th>Requisition Number</th>
+    <th>Requisition Date</th>
+    <th>Requesting Study</th>
+    <th>Requested by</th>
+    <th>Approved by</th>
+    <th>Avalability of funds by</th>
+    <!-- end results header -->
+{% endblock listboard_table_header %}
+
+
+{% block listboard_table_button_column %}
+    <td style="white-space: nowrap">
+    <div class="btn-group">
+ 		{% purchase_requisition_button result %}
+ 		{% if result.object %}
+ 			{% request_approval_button result %}
+ 		{% endif %}
+    </div>
+    </td>
+    
+{% endblock listboard_table_button_column %}
+
+
+{% block listboard_table_columns %}
+    <td>{{result.prf_number}}</td>
+    <td nowrap>{{result.req_date}}</td>
+    <td nowrap>{{result.object.bhp_allocation.name}}</td>
+    <td nowrap>{{result.request_by}}</td>
+    <td nowrap>{{result.approval_by}}</td>
+    <td nowrap>{{result.funds_confirmed}}</td>
+
+{% endblock listboard_table_columns %}

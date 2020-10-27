@@ -81,7 +81,6 @@ def generate_pdf(
 def email_report(request):
     if request.method == 'POST':
         report_email_form = ReportEmailForm(request.POST)
-
         if report_email_form.is_valid():
             sender_email = report_email_form.cleaned_data['sender_email']
             recipient_email = report_email_form.cleaned_data['recipient_email']
@@ -89,6 +88,6 @@ def email_report(request):
             message = report_email_form.cleaned_data['message']
 
             if recipient_email and sender_email:
-                send_mail(subject, message, sender_email, recipient_email)
+                send_mail(subject, message, sender_email, [recipient_email, ])
                 report_email_form.save()
                 return redirect('purchase_order_report_url')

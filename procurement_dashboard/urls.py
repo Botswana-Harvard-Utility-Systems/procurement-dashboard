@@ -1,8 +1,10 @@
 from django.urls import path
 from edc_dashboard import UrlConfig
 
-from .patterns import order_number
+from .patterns import order_number, prf_number
 from .views import (HomeView, PurchaseOrderListboardView, PurchaseOrderReportView)
+from .views import PurchaseRequisitionListboardView
+from . import utils
 
 app_name = 'procurement_dashboard'
 
@@ -20,7 +22,16 @@ purchase_order_report_url_config = UrlConfig(
     identifier_label='order_number',
     identifier_pattern=order_number)
 
+purchase_req_listboard_url_config = UrlConfig(
+    url_name='purchase_req_listboard_url',
+    view_class=PurchaseRequisitionListboardView,
+    label='purchase_req_listboard',
+    identifier_label='prf_number',
+    identifier_pattern=prf_number)
+
 urlpatterns = []
 urlpatterns += [path('procurement/', HomeView.as_view(), name='procurement_url')]
+urlpatterns += [path('email_report/', utils.email_report, name="email_report_url"),]
 urlpatterns += purchase_order_listboard_url_config.listboard_urls
 urlpatterns += purchase_order_report_url_config.listboard_urls
+urlpatterns += purchase_req_listboard_url_config.listboard_urls
