@@ -36,8 +36,9 @@ class RequestApprovalModelWrapperMixin:
         unpersisted request approval model instance.
         """
         options = dict(
-            prf_number=self.object.prf_number,
-            request_by=self.object.request_by)
+            document_id=self.document_id,
+            request_by=self.object.request_by,
+            status='new', )
         return options
 
     @property
@@ -46,5 +47,5 @@ class RequestApprovalModelWrapperMixin:
         request approval instance.
         """
         options = dict(
-            prf_number=self.object.prf_number)
+            document_id=self.document_id)
         return options

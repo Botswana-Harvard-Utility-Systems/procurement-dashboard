@@ -12,3 +12,7 @@ class PurchaseRequisitionModelWrapper(
         'purchase_req_listboard_url')
     next_url_attrs = ['prf_number']
     querystring_attrs = ['prf_number', ]
+
+    @property
+    def document_id(self):
+        return self.prf_number

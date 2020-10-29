@@ -1,12 +1,22 @@
-<a id="requestapproval_add_{{ subject_identifier }}" 
-     title="{{ title }}"
-     
-     {% if antenatal_enrollment_model_obj%}
-            class="btn btn-success btn-sm" data-toggle="tooltip"  data-placement="right"
-            href="{{ add_request_approval_href }}">
-        {% else %}
-            class="btn btn-warning btn-sm" data-toggle="tooltip"  data-placement="right"
-            href="{{ add_request_approval_href }}">
-        {% endif %}
-         Request Approval
-</a>
+{% if request_approval_model_obj.status == 'pending' %}
+	<a 	id="requestapproval_pending_{{rfa_number}}" 
+     	title=""
+     	class="btn btn-default btn-sm" data-toggle="tooltip"  data-placement="right"
+     	href="">
+         Pending Approval
+	</a>
+{% elif request_approval_model_obj.status == 'approved' %}
+	<a id="requestapproval_add_{{ rfa_number }}" 
+	     title="{{ title }}"
+	            class="btn btn-success btn-sm" data-toggle="tooltip"  data-placement="right"
+	            href="{{ add_request_approval_href }}">
+	         Request Approval
+	</a>
+{% else %}
+	<a id="requestapproval_add_{{ rfa_number }}" 
+	     title="{{ title }}"
+	            class="btn btn-warning btn-sm" data-toggle="tooltip"  data-placement="right"
+	            href="{{ add_request_approval_href }}">
+	         Request Approval
+	</a>
+{% endif %}
