@@ -25,7 +25,6 @@ def purchase_requisition_button(model_wrapper):
 def request_approval_button(model_wrapper):
     title = ['Edit request approval form.']
     return dict(
-        rfa_number=model_wrapper.request_approval.rfa_number,
         document_id=model_wrapper.document_id,
         add_request_approval_href=model_wrapper.request_approval.href,
         request_approval_model_obj=model_wrapper.request_approval_model_obj,

@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -41,6 +42,7 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
         if kwargs.get('prf_number'):
             options.update(
                 {'prf_number': kwargs.get('prf_number')})
+        options.update({'request_by': get_user(request)})
         return options
 
     def extra_search_options(self, search_term):
