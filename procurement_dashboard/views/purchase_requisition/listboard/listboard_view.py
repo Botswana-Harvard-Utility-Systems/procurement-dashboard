@@ -1,9 +1,7 @@
 import re
 
-from django.apps import apps as django_apps
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from edc_base.view_mixins import EdcBaseViewMixin
