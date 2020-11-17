@@ -29,3 +29,13 @@ def request_approval_button(model_wrapper):
         add_request_approval_href=model_wrapper.request_approval.href,
         request_approval_model_obj=model_wrapper.request_approval_model_obj,
         title=' '.join(title), )
+
+
+@register.inclusion_tag('procurement_dashboard/buttons/pending_request_button.html')
+def pending_request_button(model_wrapper):
+    title = ['Edit request approval form.']
+    return dict(
+        document_id=model_wrapper.document_id,
+        add_request_approval_href=model_wrapper.request_approval.href,
+        request_approval_model_obj=model_wrapper.request_approval_model_obj,
+        title=' '.join(title), )

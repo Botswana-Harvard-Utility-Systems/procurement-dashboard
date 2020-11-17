@@ -49,3 +49,6 @@ class RequestApprovalModelWrapperMixin:
         options = dict(
             document_id=self.document_id)
         return options
+
+    def current_user(self):
+        import pdb; pdb.set_trace()

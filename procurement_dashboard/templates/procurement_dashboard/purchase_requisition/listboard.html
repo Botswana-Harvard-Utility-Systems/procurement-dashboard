@@ -34,9 +34,12 @@
     <td style="white-space: nowrap">
     <div class="btn-group">
  		{% purchase_requisition_button result %}
- 		{% if result.object %}
+ 		{% if result.object.request_by == user %}
  			{% request_approval_button result %}
+ 		{% elif result.object.approval_by == user.first_name|add:' '|add:user.last_name %}
+ 			{% pending_request_button result %}
  		{% endif %}
+
     </div>
     </td>
     

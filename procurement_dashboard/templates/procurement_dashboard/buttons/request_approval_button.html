@@ -1,3 +1,5 @@
+<!-- Requested by (button) -->
+
 {% if request_approval_model_obj.status == 'pending' %}
 	<a 	id="requestapproval_pending_{{document_id}}" 
      	title=""
@@ -10,7 +12,7 @@
 	     title="{{ title }}"
 	            class="btn btn-success btn-sm" data-toggle="tooltip"  data-placement="right"
 	            href="{{ add_request_approval_href }}">
-	         Request Approval
+	         Request Approved
 	</a>
 {% else %}
 	<a id="requestapproval_add_{{ document_id }}" 

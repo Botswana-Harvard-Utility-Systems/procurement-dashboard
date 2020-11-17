@@ -1,7 +1,9 @@
 import re
 
+from django.apps import apps as django_apps
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.utils.decorators import method_decorator
 from edc_base.view_mixins import EdcBaseViewMixin
@@ -42,7 +44,13 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
         if kwargs.get('prf_number'):
             options.update(
                 {'prf_number': kwargs.get('prf_number')})
-        options.update({'request_by': get_user(request)})
+        request_type = request.GET.get('type')
+        if request_type == 'requests':
+            options.update({'request_by': get_user(request)})
+        elif request_type == 'approvals':
+            user = get_user(request)
+            options.update({'approval_by': f'{user.first_name} {user.last_name}'})
+
         return options
 
     def extra_search_options(self, search_term):
