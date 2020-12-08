@@ -20,7 +20,6 @@
     <!-- begin results header -->
     <th>#</th>
     <th></th>
-    <th>Requisition Number</th>
     <th>Requisition Date</th>
     <th>Requesting Study</th>
     <th>Requested by</th>
@@ -34,12 +33,38 @@
     <td style="white-space: nowrap">
     <div class="btn-group">
  		{% purchase_requisition_button result %}
+ 		{% justification_required result as required %}
+ 		{% if required %}
+ 			{% vendor_justification_button result %}
+ 		{% endif %}
  		{% if result.object.request_by == user %}
  			{% request_approval_button result %}
  		{% elif result.object.approval_by == user.first_name|add:' '|add:user.last_name %}
  			{% pending_request_button result %}
  		{% endif %}
-
+ 		{% if result.approved %}
+ 			{% purchase_order_model result as add_purchase_order_href %}
+				<a 	id="purchaseorder_add_{{ prf_number }}" 
+					title="{{ title }}"
+					{% if purchase_order_model_obj %} 
+						class="btn btn-success btn-sm" data-toggle="tooltip"  data-placement="right"
+						href="{{ add_purchase_order_href }}">
+					    Purchase Order
+					{% else %}
+						class="btn btn-warning btn-sm" data-toggle="tooltip"  data-placement="right"
+						href="{{ add_purchase_order_href }}">
+					    Purchase Order
+					{% endif %}
+				</a>
+	 		{% if result.purchase_order_model_obj %}
+	 			 <div class="btn-group">
+			 		<a id="btn-dashboard" class="btn btn-success btn-sm" role="button"
+			     		title="Generate PDF" href="{% url purchase_order_report_url result.order_number %}">
+			     		<i class="fa fa-cogs"></i> Generate PDF
+			     	</a>
+			    </div>
+	 		{% endif %}
+	 	{% endif %}
     </div>
     </td>
     
@@ -47,9 +72,8 @@
 
 
 {% block listboard_table_columns %}
-    <td>{{result.prf_number}}</td>
     <td nowrap>{{result.req_date}}</td>
-    <td nowrap>{{result.object.bhp_allocation.name}}</td>
+    <td nowrap>{% bhp_allocations result %}</td>
     <td nowrap>{{result.object.request_by.first_name}} {{result.object.request_by.last_name}}</td>
     <td nowrap>{{result.approval_by}}</td>
     <td nowrap>{{result.funds_confirmed}}</td>

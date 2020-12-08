@@ -1,11 +1,14 @@
 from django.conf import settings
 from edc_model_wrapper import ModelWrapper
 
+from .purchase_order_model_wrapper_mixin import PurchaseOrderModelWrapperMixin
 from .request_approval_model_wrapper_mixin import RequestApprovalModelWrapperMixin
+from .vendor_justification_model_wrapper_mixin import VendorJustificationModelWrapperMixin
 
 
 class PurchaseRequisitionModelWrapper(
-        RequestApprovalModelWrapperMixin, ModelWrapper):
+        RequestApprovalModelWrapperMixin, VendorJustificationModelWrapperMixin,
+        PurchaseOrderModelWrapperMixin, ModelWrapper):
 
     model = 'procurement.purchaserequisition'
     next_url_name = settings.DASHBOARD_URL_NAMES.get(

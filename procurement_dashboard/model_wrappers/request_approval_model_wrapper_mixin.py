@@ -37,8 +37,7 @@ class RequestApprovalModelWrapperMixin:
         """
         options = dict(
             document_id=self.document_id,
-            request_by=self.object.request_by,
-            status='new', )
+            request_by=self.object.request_by,)
         return options
 
     @property

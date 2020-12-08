@@ -7,8 +7,8 @@ class PurchaseOrderModelWrapper(ModelWrapper):
     model = 'procurement.purchaseorder'
     next_url_name = settings.DASHBOARD_URL_NAMES.get(
         'purchase_order_listboard_url')
-    next_url_attrs = ['order_number']
-    querystring_attrs = ['order_number', ]
+    next_url_attrs = ['order_number', 'prf_number', ]
+    querystring_attrs = ['order_number', 'prf_number', ]
 
     @property
     def purchase_order_total(self):
