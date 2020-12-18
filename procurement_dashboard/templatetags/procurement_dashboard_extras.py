@@ -1,5 +1,4 @@
 from django import template
-from django.apps import apps as django_apps
 
 register = template.Library()
 
@@ -29,6 +28,20 @@ def request_approval_button(model_wrapper):
         document_id=model_wrapper.document_id,
         add_request_approval_href=model_wrapper.request_approval.href,
         request_approval_model_obj=model_wrapper.request_approval_model_obj,
+        request_model_obj=model_wrapper.request_model_obj,
+        title=' '.join(title), )
+
+
+@register.inclusion_tag('procurement_dashboard/buttons/request_button.html')
+def request_button(model_wrapper):
+    title = ['Approval requests.']
+    return dict(
+        document_id=model_wrapper.document_id,
+        add_request_href=model_wrapper.approval_request.href,
+        request_approval_model_obj=model_wrapper.request_approval_model_obj,
+        request_model_obj=model_wrapper.request_model_obj,
+        request_approved=model_wrapper.request_approved,
+        history_objects=model_wrapper.requests,
         title=' '.join(title), )
 
 
@@ -39,6 +52,7 @@ def pending_request_button(model_wrapper):
         document_id=model_wrapper.document_id,
         add_request_approval_href=model_wrapper.request_approval.href,
         request_approval_model_obj=model_wrapper.request_approval_model_obj,
+        request_model_obj=model_wrapper.request_model_obj,
         title=' '.join(title), )
 
 
@@ -73,3 +87,8 @@ def bhp_allocations(model_wrapper):
     for allocation in allocations:
         names.append(f'{allocation.bhp_allocation.name}({allocation.percentage}%)')
     return ', '.join(names)
+
+
+@register.filter(name='has_group')
+def has_group(user, group_name):
+    return user.groups.filter(name=group_name).exists()

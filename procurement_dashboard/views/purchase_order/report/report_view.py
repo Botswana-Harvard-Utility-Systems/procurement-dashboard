@@ -2,7 +2,6 @@ import base64
 from io import BytesIO
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 
@@ -29,31 +28,14 @@ class ReportView(PdfResponseMixin, PurchaseOrderCalcMixin, NavbarViewMixin,
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
-    def purchase_order(self, order_number=None):
-        try:
-            purchase_order = self.model_cls.objects.get(
-                order_number=order_number)
-        except self.model_cls.DoesNotExist:
-            raise ValidationError(
-                f'Purchase Order number {order_number} does not exist.')
-        else:
-            return purchase_order
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         order_number = kwargs.get('order_number', None)
-        purchase_order = self.purchase_order(order_number=order_number)
-        pdf_images_bytes = self.pdf_images_as_bytes(purchase_order)
+        pdf_images_bytes = self.pdf_images_as_bytes(context.get('result'))
         context.update(
             order_number=order_number,
-            result=purchase_order,
             pdf_images_bytes=pdf_images_bytes)
         return context
-
-    def model_obj_set(self, model_obj):
-        order_items = super().model_obj_set(model_obj)
-        order_items.extend(list(model_obj.purchaseorderitem_set.all()))
-        return order_items
 
     def filter_options(self, **kwargs):
         options = super().filter_options(**kwargs)
@@ -61,6 +43,12 @@ class ReportView(PdfResponseMixin, PurchaseOrderCalcMixin, NavbarViewMixin,
             options.update(
                 {'order_number': kwargs.get('order_number')})
         return options
+
+    def model_obj_set(self, model_obj):
+        order_items = super().model_obj_set(model_obj)
+        prf_obj = self.purchase_requisition(prf_number=model_obj.prf_number)
+        order_items.extend(list(prf_obj.purchaserequisitionitem_set.all()))
+        return order_items
 
     @property
     def pdf_template(self):

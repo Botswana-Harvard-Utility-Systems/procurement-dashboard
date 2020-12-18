@@ -1,0 +1,39 @@
+<div class="btn-group">
+
+	{% if not request_approved|default:False %}
+		<div class="btn-group">
+		  <a title="Add {{ title|lower }}" type="button" class="btn btn-default btn-warning btn-sm"
+		    href="{{ add_request_href }}">
+		      <i class="fa fa-user-plus"></i>
+		  </a>
+		</div>
+	{% else %}
+		<div class="btn-group">
+		  <a title="Add {{ title|lower }}" type="button" class="btn btn-default disabled btn-sm dropdown-toggle"
+		    href="">
+		      <i class="fas fa-check-circle" style="color:green"></i>
+		  </a>
+		</div>
+	{% endif %}
+
+	<button title = "{{ title|default:'History' }}" type="button" class="btn btn-default btn-sm">
+	  	+{{ history_objects|length }} <i class="fa fa-share-square"></i></button>
+	<div class="btn-group">
+	  <button title="History" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+	      <span class="caret"></span></button>
+	      <ul class="dropdown-menu" role="menu">
+	        <li class="dropdown-header">{{ title|default:"History" }}</li>
+	        {% for obj in history_objects reversed %}
+	          <li><a href="{{ obj.get_absolute_url }}?next={{ obj.next_url }}&{{ obj.querystring }}">
+	          		{% if obj.status == 'pending' %}
+	          			<i class="fa fa-exclamation-circle" style="color:orange"></i>
+	               	{% elif obj.status == 'approved' %}
+	               		<i class="fa fa-check-circle" style="color:green"></i>
+	               	{% elif obj.status == 'rejected' %}
+	               		<i class="fa fa-times-circle" style="color:red"></i>
+	               	{% endif %}
+	               {{ obj.date_reviewed }}, Request {{ obj.status|capfirst }}</a></li>
+	        {% endfor %}
+	      </ul>
+	</div>
+</div>

@@ -1,10 +1,11 @@
 import os
 from django.apps import apps as django_apps
 
+from .report_view_mixin import ReportViewMixin
 from ....utils import generate_pdf
 
 
-class PdfResponseMixin(object, ):
+class PdfResponseMixin(ReportViewMixin):
     pdf_name = None
     pdf_template = None
     model = None

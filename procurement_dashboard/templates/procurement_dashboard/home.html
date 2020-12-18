@@ -1,5 +1,6 @@
 {% extends 'procurement_dashboard/base.html' %}
 {% load static %}
+{% load procurement_dashboard_extras %}
 
 {% block scripts %}
 {{ block.super }}
@@ -27,17 +28,27 @@
 	     </div>
    </div>
 </div>
+{% if request.user|has_group:"Procurement" %}
+	<div class="row">
+		<div class="col-md-4">
+		     <div class="box">
+			       <div class="icon"><i class="ion-ios-analytics-outline" style="color: #ff689b;"></i></div>
+			       <p class="h4"><a href="{% url purchase_req_listboard_url %}" class="btn btn-default btn-md"><i class="fa fa-file"></i> All Requisitions</a></p>
+		     </div>
+	   </div>
+	 </div>
+{% endif %}
  <div class="row">
 	<div class="col-md-4">
 	     <div class="box">
 		       <div class="icon"><i class="ion-ios-analytics-outline" style="color: #ff689b;"></i></div>
-		       <p class="h4"><a href="{% url purchase_req_listboard_url %}?type=requests" class="btn btn-default btn-md"><i class="fa fa-plus"></i> MyRequests</a></p>
+		       <p class="h4"><a href="{% url purchase_req_listboard_url %}?request_type=requests" class="btn btn-default btn-md"><i class="fa fa-plus"></i> MyRequests</a></p>
 	     </div>
    </div>
    <div class="col-md-4">
      <div class="box">
        <div class="icon"><i class="ion-ios-analytics-outline" style="color: #ff689b;"></i></div>
-       <p class="h4"><a href="{% url purchase_order_listboard_url %}" class="btn btn-default btn-lg"><i class="fa fa-list"></i>Purchase Orders</a></p>
+       <p class="h4"><a href="{% url purchase_order_listboard_url %}" class="btn btn-default btn-lg"><i class="fa fa-list"></i></a></p>
      </div>
    </div>
  </div>
@@ -45,13 +56,13 @@
 	<div class="col-md-4">
 	     <div class="box">
 		       <div class="icon"><i class="ion-ios-analytics-outline" style="color: #ff689b;"></i></div>
-		       <p class="h4"><a href="{% url purchase_req_listboard_url %}?type=approvals" class="btn btn-warning btn-md"><i class="fa fa-plus"></i> MyApprovals</a></p>
+		       <p class="h4"><a href="{% url purchase_req_listboard_url %}?request_type=approvals" class="btn btn-warning btn-md"><i class="fa fa-plus"></i> MyApprovals</a></p>
 	     </div>
    </div>
    <div class="col-md-4">
      <div class="box">
        <div class="icon"><i class="ion-ios-analytics-outline" style="color: #ff689b;"></i></div>
-       <p class="h4"><a href="{% url purchase_order_listboard_url %}" class="btn btn-default btn-lg"><i class="fa fa-list"></i>Purchase Orders</a></p>
+       <p class="h4"><a href="{% url purchase_order_listboard_url %}" class="btn btn-default btn-lg"><i class="fa fa-list"></i></a></p>
      </div>
    </div>
  </div>

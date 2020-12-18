@@ -1,2 +1,3 @@
 from .pdf_response_mixin import PdfResponseMixin
 from .purchase_order_calc_mixin import PurchaseOrderCalcMixin
+from .report_view_mixin import ReportViewMixin

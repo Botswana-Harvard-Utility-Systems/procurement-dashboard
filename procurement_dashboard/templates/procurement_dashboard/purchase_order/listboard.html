@@ -5,10 +5,6 @@
 
              
 {% block listboard_panel %}
-    <a id="purchaseorder_add" title="add purchase order" class="btn btn-sm btn-default" role="button" 
-        href="{{ purchase_order_add_url }}?next={{ purchase_order_listboard_url }}">
-            <i class="fa fa-plus fa-sm"></i> Add Purchase Order
-    </a>
     <a id="return_to_home" title="go back" class="btn btn-sm btn-default" role="button" 
         href="/">
             <i class="fa fa-arrow-left fa-sm"></i> Go Back
@@ -37,7 +33,7 @@
  		{% purchase_order_button result %}
  		<a id="btn-dashboard" class="btn btn-success btn-sm" role="button"
      		title="Generate PDF" href="{% url purchase_order_report_url result.order_number %}">
-     		<i class="fa fa-cogs"></i> Generate PDF
+     		<i class="fa fa-eye"></i> View Documents
      	</a>
     
     </div>

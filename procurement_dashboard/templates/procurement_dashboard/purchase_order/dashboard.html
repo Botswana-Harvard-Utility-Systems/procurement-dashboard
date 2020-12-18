@@ -36,14 +36,18 @@
 	    border: 1px solid rgba(0,0,0,.125);
 	    border-radius: .25rem;
 	}
+	.card h4 {
+		font-family: sans-serif;
+		font-weight: 500;
+	}
 	.report {
-    width: 210.0mm;
-    height: 297.0mm;
+    width: 190.0mm;
+    height: 270.0mm;
 	}
 	.report {
 	    background: white;
 	    box-shadow: 0 0 0.2cm rgba(0,0,0,0.2);
-	    margin: 5mm auto;
+	    margin: 0mm auto;
 	    padding: 0 !important;
 	}
 	.report {
@@ -53,6 +57,37 @@
 	    font-family: Tahoma sans-serif;
 	    font-size: 9pt;
 	}
+
+	.clickable
+	{
+	    cursor: pointer;
+	}
+	
+	.clickable .glyphicon
+	{
+	    background: rgba(0, 0, 0, 0.15);
+	    display: inline-block;
+	    padding: 6px 12px;
+	    border-radius: 4px
+	}
+	
+	.panel-heading span
+	{
+	    margin-top: -23px;
+	    margin-right: -9px;
+	}
+
+	a.clickable { color: inherit; }
+	a.clickable:hover { text-decoration:none; }
+
+	.panel-body { padding:0px; }
+	.panel-footer { margin: 0; }
+	.panel .glyphicon,.list-group-item .glyphicon { margin-right:5px; }
+	.panel-body .radio, .checkbox { display:inline-block;margin:0px; }
+	.panel-body input[type=checkbox]:checked + label { text-decoration: line-through;color: rgb(128, 144, 160); }
+	.list-group-item:hover, a.list-group-item:focus {text-decoration: none;background-color: rgb(245, 245, 245);}
+	.list-group { margin-bottom:0px; padding:5px }
+
 </style>
 {% endblock extra-styles %}
 {% block extra-scripts %}
@@ -97,13 +132,44 @@
 				});
 			});
 		}
+
+		$(document).on('click', '.panel-heading span.clickable', function (e) {
+		    var $this = $(this);
+		    if (!$this.hasClass('panel-collapsed')) {
+		        $this.parents('.panel').find('.panel-body').slideUp();
+		        $this.addClass('panel-collapsed');
+		        $this.find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+		    } else {
+		        $this.parents('.panel').find('.panel-body').slideDown();
+		        $this.removeClass('panel-collapsed');
+		        $this.find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+		    }
+		});
+		$(document).on('click', '.panel div.clickable', function (e) {
+		    var $this = $(this);
+		    if (!$this.hasClass('panel-collapsed')) {
+		        $this.parents('.panel').find('.panel-body').slideUp();
+		        $this.addClass('panel-collapsed');
+		        $this.find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+		    } else {
+		        $this.parents('.panel').find('.panel-body').slideDown();
+		        $this.removeClass('panel-collapsed');
+		        $this.find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+		    }
+		});
+		$(document).ready(function () {
+		    $('.panel-heading span.clickable').click();
+		    $('.panel div.clickable').click();
+		});
 	</script>
 {% endblock %}
 
 {% block main %}
 	
 <div class="container">
-	<div class="card row my-4 p-4">
+<div class="col-md-12">
+	<div class="card row p-4">
+		<h4>General Information</h4>
 		<table class="table table-sm table-condensed small my-4">
 			<thead>
 				<tr>
@@ -112,20 +178,28 @@
 					<th>Vendor</th>
 					<th>Agent</th>
 					<th>BHP Allocation</th>
-					<th>Status</th>
+					<th>Invoice Status</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td>{{order_number}}</td>
 					<td>{{result.order_date}}</td>
-					<td>{{result.vendor.name}}</td>
+					<td>{{justification_obj.selected_vendor.name}}</td>
 					<td>{{result.agent|capfirst}}</td>
-					<td>{{result.bhp_allocation}}</td>
+					<td>
+						{% for allocation in prf_obj.allocation_set.all %}
+	            			{{allocation.bhp_allocation.name}}({{allocation.percentage}}%), 
+	            		{% endfor %}
+					</td>
 					<td>Not Paid</td>
 				</tr>
 			</tbody>
 		</table>
+	</div>
+</div>
+<div class="col-md-8">
+	<div class="card row my-4 p-4">
 		<div class="row" id="report-controller">
 			<div class="col-sm-12">
 				<div class="d-inline-block">
@@ -146,7 +220,7 @@
 			{% if pdf_images_bytes %}
 				{% for pdf_image_bytes in pdf_images_bytes %}
 					<div class="report">
-						<img src="data:image/png;base64,{{pdf_image_bytes}}" width='794px' height='1123px'></img>
+						<img src="data:image/png;base64,{{pdf_image_bytes}}" width='650px' height='950px'></img>
 					</div>
 				{% endfor %}
 			{% endif %}
@@ -190,8 +264,73 @@
 	   </div>
 	 </div>
 	</div>
+	</div>
+	<!-- Dash board panels -->
+	<div class="col-md-4">
+		<!-- Begin authorization panel -->
+		 <div class="row p-4">
+            <div class="panel panel-info">
+                <div class="panel-heading clickable">
+                    <h3 class="panel-title">Authorization</h3>
+                    <span class="pull-right "><i class="glyphicon glyphicon-minus"></i></span>
+                </div>
+                <div class="panel-body">
+                	<ul class="list-group">
+                		<li class="list-group-item">
+                			Authorization 1: <a href="">Request</a>
+                		</li>
+                		<li class="list-group-item">
+                			Authorization 2: <a href="">Request</a>
+                		</li>
+                	</ul>
+                </div>
+            </div>
+    	</div>
+    	<!-- End authorization panel -->
+		<!-- Begin other document links -->
+		<div class="row p-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-list"></span> Other Document Links
+                    <div class="pull-right action-buttons">
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-cog" style="margin-right: 0px;"></span>
+                            </button>
+                            <ul class="dropdown-menu slidedown">
+                                <li><a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-download"></span> Download All</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <div class="checkbox">
+                                <input type="checkbox" id="checkbox" />
+                                <label for="checkbox">
+                                    List group item heading
+                                </label>
+                            </div>
+                            <div class="pull-right action-buttons">
+                                <a href="http://www.jquery2dotnet.com"><span class="glyphicon glyphicon-download"></span></a>
+                            </div>
+                        </li>           
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div>
+                            <h6>
+                                Total Count <span class="label label-info">25</span></h6>
+                        </div>
+                    </div>
+                </div>
+	        </div>
+	    </div>
+	   	<!-- End other document links -->
+	</div>
 </div>
-
 
 
 {% endblock main %}

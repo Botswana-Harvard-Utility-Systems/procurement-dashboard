@@ -1,13 +1,13 @@
 <!-- Approval by (buttton) -->
 
-{% if request_approval_model_obj.status == 'pending' %}
+{% if request_model_obj.status == 'pending' %}
 	<a id="requestapproval_add_{{ document_id }}" 
 	   title="{{ title }}"
 	   class="btn btn-info btn-sm" data-toggle="tooltip"  data-placement="right"
 	   href="{{ add_request_approval_href }}">
 	   Pending Approval
 	</a>
-{% elif request_approval_model_obj.status == 'approved' %}
+{% elif request_model_obj.status == 'approved' %}
 	<a id="requestapproval_add_{{ document_id }}" 
 	   title="{{ title }}"
 	   class="btn btn-success btn-sm" data-toggle="tooltip"  data-placement="right"

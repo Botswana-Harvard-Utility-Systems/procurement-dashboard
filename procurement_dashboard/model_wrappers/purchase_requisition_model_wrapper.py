@@ -13,7 +13,7 @@ class PurchaseRequisitionModelWrapper(
     model = 'procurement.purchaserequisition'
     next_url_name = settings.DASHBOARD_URL_NAMES.get(
         'purchase_req_listboard_url')
-    next_url_attrs = ['prf_number']
+    next_url_attrs = ['prf_number', 'request_type', ]
     querystring_attrs = ['prf_number', ]
 
     @property

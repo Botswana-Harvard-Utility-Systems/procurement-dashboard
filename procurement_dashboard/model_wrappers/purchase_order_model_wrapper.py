@@ -7,13 +7,14 @@ class PurchaseOrderModelWrapper(ModelWrapper):
     model = 'procurement.purchaseorder'
     next_url_name = settings.DASHBOARD_URL_NAMES.get(
         'purchase_order_listboard_url')
-    next_url_attrs = ['order_number', 'prf_number', ]
-    querystring_attrs = ['order_number', 'prf_number', ]
+    next_url_attrs = ['prf_number', 'request_type', ]
+    querystring_attrs = ['prf_number', ]
 
-    @property
-    def purchase_order_total(self):
-        order_items = self.object.purchaseorderitem_set.all()
-        total = 0
-        for order_item in order_items:
-            total += order_item.total_price_incl
-        return float(total)
+#     @property
+#     def purchase_order_total(self):
+#         import pdb; pdb.set_trace()
+#         order_items = self.object.purchaseorderitem_set.all()
+#         total = 0
+#         for order_item in order_items:
+#             total += order_item.total_price_incl
+#         return float(total)
