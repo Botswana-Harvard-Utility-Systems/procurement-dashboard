@@ -46,9 +46,10 @@ class RequestApprovalModelWrapperMixin:
         """Returns a dictionary of options to create a new
         unpersisted request approval model instance.
         """
+        request_by = self.object.request_by if self.object.request else None
         options = dict(
             document_id=self.document_id,
-            request_by=self.object.request_by,)
+            request_by=request_by,)
         return options
 
     @property
@@ -65,16 +66,18 @@ class RequestApprovalModelWrapperMixin:
         wrapped_entries = []
         requests = self.request_model_cls.objects.filter(
             request_approval=self.request_approval_model_obj)
+        request_type = self.request_type if self.request_type else None
         for request in requests:
             wrapped_entries.append(
-                self.request_model_wrapper_cls(request, request_type=self.request_type))
+                self.request_model_wrapper_cls(request, request_type=request_type))
         return wrapped_entries
 
     @property
     def approval_request(self):
         request = self.request_model_cls(
             request_approval=self.request_approval_model_obj)
-        return self.request_model_wrapper_cls(request, request_type=self.request_type)
+        request_type = self.request_type if self.request_type else None
+        return self.request_model_wrapper_cls(request, request_type=request_type)
 
     @property
     def request_approved(self):

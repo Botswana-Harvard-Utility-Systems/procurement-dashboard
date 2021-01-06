@@ -48,8 +48,7 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
         if request_type == 'requests':
             options.update({'request_by': get_user(request)})
         elif request_type == 'approvals':
-            user = get_user(request)
-            options.update({'approval_by': f'{user.first_name} {user.last_name}'})
+            options.update({'approval_by': get_user(request)})
 
         return options
 

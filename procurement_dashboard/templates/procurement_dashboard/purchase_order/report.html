@@ -88,7 +88,7 @@
 				      	</tr>
 				      	<tr>
 				      		<td>
-				      			<p>{{justification_obj.selected_vendor.address.postal_address}}</p>
+				      			<p>{{prf_obj.selected_vendor.address.postal_address}}</p>
 				      		</td>
 				      	</tr>
 				      	<tr>
@@ -96,7 +96,7 @@
 				      			<p>Contact Person</p>
 				      		</td>
 				      		<td class="trailing-value">
-				      			<p>{{justification_obj.selected_vendor.contact_person}}</p>
+				      			<p>{{prf_obj.selected_vendor.contact_person}}</p>
 				      		</td>
 				      	</tr>
 				      	<tr>
@@ -104,7 +104,7 @@
 				      			<p>Telephone</p>
 				      		</td>
 				      		<td class="trailing-value">
-				      			<p>+267{{justification_obj.selected_vendor.address.telephone_contacts}}</p>
+				      			<p>+267{{prf_obj.selected_vendor.address.telephone_contacts}}</p>
 				      		</td>
 				      	</tr>
 				      	<tr>
@@ -112,7 +112,7 @@
 				      			<p>Email</p>
 				      		</td>
 				      		<td class="trailing-value">
-				      			<a href="mailto:{{result.vendor.email}}">{{justification_obj.selected_vendor.address.email}}</a>
+				      			<a href="mailto:{{result.vendor.email}}">{{prf_obj.selected_vendor.address.email}}</a>
 				      		</td>
 				      	</tr>
 				      </table>
@@ -140,7 +140,7 @@
    			</thead>
    			<tbody>
    				<tr>
-	   				<td>{{justification_obj.selected_vendor.name}}</td>
+	   				<td>{{prf_obj.selected_vendor.name}}</td>
 	   				<td class="separator"></td>
 	   				<td>{% now "SHORT_DATE_FORMAT" %}</td>
 	   				<td class="separator"></td>

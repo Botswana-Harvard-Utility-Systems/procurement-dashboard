@@ -1,11 +1,29 @@
-{% extends "edc_dashboard/listboard.html" %}
+{% extends listboard_base_template %}
 {% load admin_urls %}
 {% load edc_base_extras %}
 {% load procurement_dashboard_extras %}
+{% load edc_dashboard_extras %}
 
-             
+
+{% block main %}
+<div class="col-md-10">
+<!-- start listboard main block-->
+<div class="panel-group">
+<div class="panel panel-{{ listboard_panel_style }}">
+<div class="panel-heading">
+
+<i class="{{ listboard_fa_icon }} fa-2x"></i>&nbsp;
+                    
+<!-- begin search form -->
+<span class="pull-right">
+    {% block listboard_search_form %}
+        {% include 'edc_dashboard/search_form.html' %}
+    {% endblock listboard_search_form %}
+</span>
+<!-- end search form -->
+
 {% block listboard_panel %}
-    <a id="purchasereq_add" title="add purchase requisition" class="btn btn-sm btn-default" role="button" 
+	<a id="purchasereq_add" title="add purchase requisition" class="btn btn-sm btn-default" role="button" 
         href="{{ purchase_req_add_url }}?next={{ purchase_req_listboard_url }}">
             <i class="fa fa-plus fa-sm"></i> Add Purchase Requisition
     </a>
@@ -15,60 +33,113 @@
     </a>
 {% endblock listboard_panel %}
 
+</div> <!--end panel heading -->
+
+
+<!-- begin table -->
+<div class="table table-responsive">
+<table class="table table-condensed table-hover small">
+<thead>
 
 {% block listboard_table_header %}
-    <!-- begin results header -->
+     <!-- begin results header -->
     <th>#</th>
     <th></th>
     <th>Requisition Date</th>
     <th>Requesting Study</th>
     <th>Requested by</th>
     <th>Approved by</th>
-    <th>Avalability of funds by</th>
     <!-- end results header -->
 {% endblock listboard_table_header %}
 
+</thead><tbody>
 
-{% block listboard_table_button_column %}
-    <td style="white-space: nowrap">
-    <div class="btn-group">
- 		{% purchase_requisition_button result %}
- 		{% justification_required result as required %}
- 		{% if required %}
- 			{% vendor_justification_button result %}
- 		{% endif %}
- 
- 		{% request_button result %} 
- 
- 		{% if result.approved %}
- 			{% purchase_order_model result as add_purchase_order_href %}
-				<a 	id="purchaseorder_add_{{ prf_number }}" 
-					title="{{ title }}"
-					{% if result.purchase_order_model_obj %} 
-						class="btn btn-success btn-sm" data-toggle="tooltip"  data-placement="right"
-						href="{{ add_purchase_order_href }}">
-					    Purchase Order
-					{% else %}
-						class="btn btn-warning btn-sm" data-toggle="tooltip"  data-placement="right"
-						href="{{ add_purchase_order_href }}">
-					    Purchase Order
-					{% endif %}
-				</a>
-	 		{% if result.purchase_order_model_obj %}
-	 			 
-	 		{% endif %}
-	 	{% endif %}
-    </div>
-    </td>
-    
-{% endblock listboard_table_button_column %}
+{% block listboard_table_body %}
 
+    {% for result in results %}
+        <tr> 
+        
+        <td>{{ forloop.counter }}</td>
 
-{% block listboard_table_columns %}
-    <td nowrap>{{result.req_date}}</td>
-    <td nowrap>{% bhp_allocations result %}</td>
-    <td nowrap>{{result.object.request_by.first_name}} {{result.object.request_by.last_name}}</td>
-    <td nowrap>{{result.approval_by}}</td>
-    <td nowrap>{{result.funds_confirmed}}</td>
+        {% block listboard_table_button_column %}
+            <td style="white-space: nowrap">
+			    <div class="btn-group">
+			 		{% purchase_requisition_button result %}
+			 		{% justification_required result as required %}
+			 		{% if required %}
+			 			{% vendor_justification_button result %}
+			 		{% endif %}
+			 		{% request_button result %} 
+			 		{% if result.approved %}
+			 			{% purchase_order_model result as add_purchase_order_href %}
+			 			{% if not result.purchase_order_model_obj and request.user|has_group:"Procurement" %}
+							<a 	id="purchaseorder_add_{{ prf_number }}" 
+								title="{{ title }}"
+								class="btn btn-warning btn-sm" data-toggle="tooltip"  data-placement="right"
+								href="{{ add_purchase_order_href }}">
+								    Purchase Order
+							</a>
+				 		{% elif result.purchase_order_model_obj %}
+				 			 <a id="btn-dashboard" class="btn btn-info btn-sm" role="button"
+					     		title="Generate PDF" href="{% url purchase_order_report_url result.purchase_order_model_obj.order_number %}">
+					     		Purchase Order <i class="fa fa-external-link-alt"></i> 
+			   				</a>
+				 		{% endif %}
+				 	{% endif %}
+			    </div>
+			   </td>
+        {% endblock listboard_table_button_column %}
 
-{% endblock listboard_table_columns %}
+        {% block listboard_table_columns %}
+            <td nowrap>{{result.req_date}}</td>
+		    <td nowrap>{% bhp_allocations result %}</td>
+		    <td nowrap>{{result.object.request_by}}</td>
+		    <td nowrap>
+		    {% if result.approved %}
+		    	{{result.object.approval_by}}
+		    {% endif %}
+		    </td>
+        {% endblock listboard_table_columns %}
+        </tr>
+
+    {% endfor %}
+
+{% endblock listboard_table_body %}
+
+</tbody></table>
+
+<!-- begin spacer rows -->
+<table>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+</table>
+<!-- end spacer rows -->
+
+</div><!-- end table -->
+
+{% paginator_row %}
+
+</div>  <!--end panel -->
+</div> <!--end panel-group -->
+</div>
+<div class="panel-group col-sm-2" id="sidebar">
+     <div class="panel panel-default">
+         <div class="panel-heading">
+             <h4 class="panel-title">
+                 <a data-toggle="collapse" data-parent="#sidebar" href="#sidebar-first">
+                 	<small><i class="fa fa-filter" aria-hidden="true"></i></small> Filters
+                 </a>
+             </h4>
+         </div>
+         <ul id="sidebar-first" class="list-group panel-collapse collapse">
+             <li class="list-group-item"><a href="#">Menu Item 1</a></li>
+             <li class="list-group-item"><a href="#">Menu Item 2</a></li>
+             <li class="list-group-item"><a href="#">Menu Item 3</a></li>
+         </ul>
+     </div>
+</div>
+<!-- end listboard main block -->
+{% endblock main %}

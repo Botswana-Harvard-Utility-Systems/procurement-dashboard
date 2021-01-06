@@ -2,166 +2,11 @@
 {% load static %}
 
 {% block extra-styles %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
-
-<style>
-	.doc-btns div {
-		margin-right: 100px
-	}
-	.p-4 {
-    padding: 1.5rem !important;
-	}
-	.mb-4, .my-4 {
-    margin-bottom: 1.5rem !important;
-	}
-	.mt-4, .my-4 {
-	    margin-top: 1.5rem !important;
-	}
-	.mb-2, .my-2 {
-    margin-bottom: .5rem !important;
-	}
-	.mt-2, .my-2 {
-	    margin-top: .5rem !important;
-	}
-	.card {
-	    position: relative;
-	    display: -ms-flexbox;
-	    display: flex;
-	    -ms-flex-direction: column;
-	    flex-direction: column;
-	    min-width: 0;
-	    word-wrap: break-word;
-	    background-color: #fff;
-	    background-clip: border-box;
-	    border: 1px solid rgba(0,0,0,.125);
-	    border-radius: .25rem;
-	}
-	.card h4 {
-		font-family: sans-serif;
-		font-weight: 500;
-	}
-	.report {
-    width: 190.0mm;
-    height: 270.0mm;
-	}
-	.report {
-	    background: white;
-	    box-shadow: 0 0 0.2cm rgba(0,0,0,0.2);
-	    margin: 0mm auto;
-	    padding: 0 !important;
-	}
-	.report {
-	    overflow: hidden;
-	    position: relative;
-	    box-sizing: border-box;
-	    font-family: Tahoma sans-serif;
-	    font-size: 9pt;
-	}
-
-	.clickable
-	{
-	    cursor: pointer;
-	}
-	
-	.clickable .glyphicon
-	{
-	    background: rgba(0, 0, 0, 0.15);
-	    display: inline-block;
-	    padding: 6px 12px;
-	    border-radius: 4px
-	}
-	
-	.panel-heading span
-	{
-	    margin-top: -23px;
-	    margin-right: -9px;
-	}
-
-	a.clickable { color: inherit; }
-	a.clickable:hover { text-decoration:none; }
-
-	.panel-body { padding:0px; }
-	.panel-footer { margin: 0; }
-	.panel .glyphicon,.list-group-item .glyphicon { margin-right:5px; }
-	.panel-body .radio, .checkbox { display:inline-block;margin:0px; }
-	.panel-body input[type=checkbox]:checked + label { text-decoration: line-through;color: rgb(128, 144, 160); }
-	.list-group-item:hover, a.list-group-item:focus {text-decoration: none;background-color: rgb(245, 245, 245);}
-	.list-group { margin-bottom:0px; padding:5px }
-
-</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+	<link type="text/css" rel="stylesheet" href="{% static 'procurement_dashboard/css/dashboard.css' %}">
 {% endblock extra-styles %}
 {% block extra-scripts %}
-	<script type="text/javascript" charset="utf8">
-		function formAjaxSubmit(modal, action, cbAfterLoad, cbAfterSuccess) {
-			var form = modal.find('.modal-body form');
-			var header = $(modal).find('.modal-header');
-	
-			var btn_save = modal.find('.modal-footer .btn-save');
-			if (btn_save) {
-				btn_save.off().on('click', function(e) {
-					modal.find('.modal-bosy form').submit();
-				});
-			}
-	
-			if (cbAfterLoad) { cbAfterLoad(modal); }
-			
-			modal.find('form input:visible').first().focus();
-	
-			$(form).on('submit', function(e) {
-				e.preventDefault();
-	
-				var url = $(this).attr('action') || action;
-	
-				$.ajax({
-					type: $(this).attr('method'),
-					url: url,
-					data: $(this).serialize(),
-					success: function(xhr, ajaxOptions, thrownError) {
-	
-						$(modal).find('.modal-body').html(xhr);
-	
-						if ($(xhr).find('.has-error').length > 0) {
-							formAjaxSubmit(modal, url, cbAfterLoad, cbAfterSuccess);
-						} else {
-							$(modal).modal('hide');
-							if (cbAfterSuccess) { cbAfterSuccess(modal); }
-						}
-					},
-					error: function(xhr, ajaxOptions, thrownError) {
-					}
-				});
-			});
-		}
-
-		$(document).on('click', '.panel-heading span.clickable', function (e) {
-		    var $this = $(this);
-		    if (!$this.hasClass('panel-collapsed')) {
-		        $this.parents('.panel').find('.panel-body').slideUp();
-		        $this.addClass('panel-collapsed');
-		        $this.find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
-		    } else {
-		        $this.parents('.panel').find('.panel-body').slideDown();
-		        $this.removeClass('panel-collapsed');
-		        $this.find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
-		    }
-		});
-		$(document).on('click', '.panel div.clickable', function (e) {
-		    var $this = $(this);
-		    if (!$this.hasClass('panel-collapsed')) {
-		        $this.parents('.panel').find('.panel-body').slideUp();
-		        $this.addClass('panel-collapsed');
-		        $this.find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
-		    } else {
-		        $this.parents('.panel').find('.panel-body').slideDown();
-		        $this.removeClass('panel-collapsed');
-		        $this.find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
-		    }
-		});
-		$(document).ready(function () {
-		    $('.panel-heading span.clickable').click();
-		    $('.panel div.clickable').click();
-		});
-	</script>
+	<script type="text/javascript" charset="utf8" src="{% static 'procurement_dashboard/js/dashboard.js' %}"></script>
 {% endblock %}
 
 {% block main %}
@@ -169,7 +14,10 @@
 <div class="container">
 <div class="col-md-12">
 	<div class="card row p-4">
-		<h4>General Information</h4>
+		<h4>General Information 
+		{% if not approved %}
+			<span class="approval"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Pending approval(s) </span>
+		{% endif %}</h4>
 		<table class="table table-sm table-condensed small my-4">
 			<thead>
 				<tr>
@@ -185,7 +33,7 @@
 				<tr>
 					<td>{{order_number}}</td>
 					<td>{{result.order_date}}</td>
-					<td>{{justification_obj.selected_vendor.name}}</td>
+					<td>{{prf_obj.selected_vendor.name}}</td>
 					<td>{{result.agent|capfirst}}</td>
 					<td>
 						{% for allocation in prf_obj.allocation_set.all %}
@@ -271,13 +119,15 @@
 		 <div class="row p-4">
             <div class="panel panel-info">
                 <div class="panel-heading clickable">
-                    <h3 class="panel-title">Authorization</h3>
-                    <span class="pull-right "><i class="glyphicon glyphicon-minus"></i></span>
+                    <span class="glyphicon glyphicon-check" style="background:none;padding:0px;"></span> Authorization (s)
+                    <div>
+                    	<span class="pull-right"><i class="glyphicon glyphicon-minus"></i></span>
+                    </div>
                 </div>
                 <div class="panel-body">
                 	<ul class="list-group">
                 		<li class="list-group-item">
-                			Authorization 1: <a href="">Request</a>
+                			Authorization 1: <a href="{{ add_request_href }}">Request</a>
                 		</li>
                 		<li class="list-group-item">
                 			Authorization 2: <a href="">Request</a>
@@ -287,6 +137,29 @@
             </div>
     	</div>
     	<!-- End authorization panel -->
+    	<!-- Begin relatted forms -->
+		<div class="row p-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-folder-open"></span> Related forms
+                </div>
+                <div class="panel-body">
+                    <ol class="list-group">
+                        <li class="list-group-item">
+                            <div class="invoice">
+                                <a href="http://www.jquery2dotnet.com">Goods Received Note</a>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="invoice">
+                                <a href="http://www.jquery2dotnet.com">Invoice</a>
+                            </div>
+                        </li>           
+                    </ol>
+                </div>
+	        </div>
+	    </div>
+	   	<!-- End related forms -->
 		<!-- Begin other document links -->
 		<div class="row p-4">
             <div class="panel panel-info">

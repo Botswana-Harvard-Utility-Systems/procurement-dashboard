@@ -1,0 +1,91 @@
+.approval {
+	font-size: 1.5rem;
+	font-weight: 500;
+	color: #ffa500;
+	border: 0.2rem solid lightgray;
+	border-radius: 25px;
+	padding: 0.2rem 1rem;
+}
+
+.doc-btns div {
+	margin-right: 100px
+}
+.p-4 {
+   padding: 1.5rem !important;
+}
+.mb-4, .my-4 {
+   margin-bottom: 1.5rem !important;
+}
+.mt-4, .my-4 {
+    margin-top: 1.5rem !important;
+}
+.mb-2, .my-2 {
+   margin-bottom: .5rem !important;
+}
+.mt-2, .my-2 {
+    margin-top: .5rem !important;
+}
+.card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+}
+.card h4 {
+	font-family: sans-serif;
+	font-weight: 500;
+}
+.report {
+   width: 190.0mm;
+   height: 270.0mm;
+}
+.report {
+    background: white;
+    box-shadow: 0 0 0.2cm rgba(0,0,0,0.2);
+    margin: 0mm auto;
+    padding: 0 !important;
+}
+.report {
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+    font-family: Tahoma sans-serif;
+    font-size: 9pt;
+}
+
+.clickable
+{
+    cursor: pointer;
+}
+
+.clickable .glyphicon
+{
+    background: rgba(0, 0, 0, 0.15);
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px
+}
+
+.panel-heading span
+{
+    margin-top: -23px;
+    margin-right: -9px;
+}
+
+a.clickable { color: inherit; }
+a.clickable:hover { text-decoration:none; }
+
+.panel-body { padding:0px; }
+.panel-footer { margin: 0; }
+.panel .glyphicon,.list-group-item .glyphicon { margin-right:5px; }
+.panel-body .radio, .checkbox { display:inline-block;margin:0px; }
+.panel-body input[type=checkbox]:checked + label { text-decoration: line-through;color: rgb(128, 144, 160); }
+.list-group-item:hover, a.list-group-item:focus {text-decoration: none;background-color: rgb(245, 245, 245);}
+.list-group { margin-bottom:0px; padding:5px }
