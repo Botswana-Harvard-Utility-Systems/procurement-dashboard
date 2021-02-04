@@ -35,18 +35,40 @@ class ReportViewMixin(ContextMixin):
         else:
             return justification
 
-    def approved(self, overall_sum_incl, purchase_order):
-        approved = False
-        if purchase_order.first_approval:
-            approved = True
-            if overall_sum_incl and overall_sum_incl > 5000:
-                approved = True if purchase_order.second_approval else False
-        return approved
+    def goods_received_note(self, order_number):
+        goods_received_cls = django_apps.get_model('procurement.goodsreceivednote')
+        try:
+            goods_received = goods_received_cls.objects.get(order_number=order_number)
+        except goods_received_cls.DoesNotExist:
+            return None
+        else:
+            return goods_received
+
+    def purchase_invoice(self, order_number):
+        purchase_invoice_cls = django_apps.get_model('procurement.purchaseinvoice')
+        try:
+            purchase_invoice = purchase_invoice_cls.objects.get(order_number=order_number)
+        except purchase_invoice_cls.DoesNotExist:
+            return None
+        else:
+            return purchase_invoice
 
     @property
     def wrapped_purchase_order(self):
         purchase_order = self.purchase_order(self.kwargs.get('order_number', None))
         return PurchaseOrderModelWrapper(purchase_order, request_type=None)
+
+    @property
+    def wrapped_by_first_approver(self):
+        purchase_order = self.purchase_order(self.kwargs.get('order_number', None))
+        return PurchaseOrderModelWrapper(
+            purchase_order, request_type=None, request_to=purchase_order.first_approver)
+
+    @property
+    def wrapped_by_second_approver(self):
+        purchase_order = self.purchase_order(self.kwargs.get('order_number', None))
+        return PurchaseOrderModelWrapper(
+            purchase_order, request_type=None, request_to=purchase_order.second_approver)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -54,10 +76,18 @@ class ReportViewMixin(ContextMixin):
         purchase_order = self.purchase_order(order_number=order_number)
         prf = self.purchase_requisition(purchase_order.prf_number)
         add_request_href = self.wrapped_purchase_order.approval_request.href
-        overall_sum_incl = context.get('overall_sum_incl', None)
-        approved = self.approved(overall_sum_incl, purchase_order)
+        approved = purchase_order.authorised
+        auth_one_request = self.wrapped_by_first_approver.request_by_approver
+        auth_two_request = self.wrapped_by_second_approver.request_by_approver
+        goods_received = self.goods_received_note(order_number=order_number)
+        purchase_invoice = self.purchase_invoice(order_number=order_number)
         context.update(
             prf_obj=prf,
+            wrapped_purchase_order=self.wrapped_purchase_order,
             add_request_href=add_request_href,
+            auth_one_request=auth_one_request,
+            auth_two_request=auth_two_request,
+            purchase_invoice=purchase_invoice,
+            goods_received=goods_received,
             approved=approved)
         return context

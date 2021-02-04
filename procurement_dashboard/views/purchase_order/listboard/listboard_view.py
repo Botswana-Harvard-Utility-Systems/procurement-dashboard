@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
@@ -42,6 +43,17 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
             options.update(
                 {'order_number': kwargs.get('order_number')})
         return options
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        current_user = get_user(self.request)
+        groups = current_user.groups.all()
+        group_names = [group.name for group in groups if groups]
+        if not all(group in ['Procurement', 'Finance'] for group in group_names):
+            qs = qs.filter(
+                Q(first_approver=current_user) | Q(second_approver=current_user))
+        return qs
 
     def extra_search_options(self, search_term):
         q = Q()

@@ -1,0 +1,67 @@
+#filters {
+    border-bottom: none;
+    position: relative;
+}
+#filters li{
+    margin-right: 15px;
+}
+#filters li a{
+    padding: 20px 15px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #25283d;
+    border-radius: 0;
+    margin-right: 0;
+    border: none;
+    position: relative;
+    transition: all 0.5s ease 0s;
+}
+
+#filters li a:hover,
+#filters li.active a,
+#filters li.active a:hover{
+    background-color: transparent;
+    border: none;
+}
+
+#filters li a:hover{
+    background: transparent;
+    color: #4cc985;
+}
+#filters li a:before{
+    content: "";
+    width: 100%;
+    height: 1px;
+    background: rgba(0,0,0, 0.2);
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    transform: scale(0);
+    transition: all 700ms ease 0s;
+}
+#filters li a:after{
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4cc985;
+    margin: 0 auto;
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    transform: scale(0);
+    transition: all 700ms ease 0s;
+}
+#filters li.active a,
+#filters li.active a:focus,
+#filters li.active a:hover{
+    border: none;
+    color: #4cc985;
+}
+#filters li a:hover:before,
+#filters li.active a:before,
+#filters li a:hover:after,
+#filters li.active a:after{
+    transform: scale(1);
+}

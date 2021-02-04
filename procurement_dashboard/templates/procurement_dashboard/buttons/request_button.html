@@ -1,21 +1,21 @@
 <div class="btn-group">
-
-	{% if not request_approved|default:False %}
-		<div class="btn-group">
-		  <a title="Add {{ title|lower }}" type="button" class="btn btn-default btn-warning btn-sm"
-		    href="{{ add_request_href }}">
-		      <i class="fa fa-user-plus"></i>
-		  </a>
-		</div>
-	{% else %}
-		<div class="btn-group">
-		  <a title="Add {{ title|lower }}" type="button" class="btn btn-default disabled btn-sm dropdown-toggle"
-		    href="">
-		      <i class="fas fa-check-circle" style="color:green"></i>
-		  </a>
-		</div>
-	{% endif %}
-
+		{% if not request_approved|default:False %}
+			{% if request_approval_model_obj.request_by == user %}
+			<div class="btn-group">
+			  <a title="Request Approval" type="button" class="btn btn-default btn-warning btn-sm"
+			    href="{{ add_request_href }}">
+			      <i class="fa fa-user-plus"></i>
+			  </a>
+			</div>
+			{% endif %}
+		{% else %}
+			<div class="btn-group">
+			  <a title="Add {{ title|lower }}" type="button" class="btn btn-default disabled btn-sm dropdown-toggle"
+			    href="">
+			      <i class="fas fa-check-circle" style="color:green"></i>
+			  </a>
+			</div>
+		{% endif %}
 	<button title = "{{ title|default:'History' }}" type="button" class="btn btn-default btn-sm">
 	  	+{{ history_objects|length }} <i class="fa fa-share-square"></i></button>
 	<div class="btn-group">

@@ -3,52 +3,75 @@
 {% load edc_base_extras %}
 {% load procurement_dashboard_extras %}
 {% load edc_dashboard_extras %}
+{% load static %}
 
+{% block extra-css %}
+{{ block.super }}
+	<link href="{% static 'procurement_dashboard/css/listboard.css' %}"rel=stylesheet>
+	<link href="{% static 'procurement_dashboard/css/bootstrap/bootstrap-table.min.css' %}"rel=stylesheet>
+{% endblock extra-css %}
+
+
+{% block extra-scripts %}
+{{ block.super }}
+	<script src="{% static 'procurement_dashboard/js/bootstrap/bootstrap-table.min.js' %}"></script>
+	<script src="{% static 'procurement_dashboard/js/bootstrap/bootstrap-table-filter-control.min.js' %}"></script>
+{% endblock %}
 
 {% block main %}
-<div class="col-md-10">
 <!-- start listboard main block-->
-<div class="panel-group">
-<div class="panel panel-{{ listboard_panel_style }}">
-<div class="panel-heading">
 
-<i class="{{ listboard_fa_icon }} fa-2x"></i>&nbsp;
-                    
-<!-- begin search form -->
-<span class="pull-right">
-    {% block listboard_search_form %}
-        {% include 'edc_dashboard/search_form.html' %}
-    {% endblock listboard_search_form %}
-</span>
-<!-- end search form -->
+<!-- Filter pills -->
+{% if listboard_view_filters %}
+  <ul class="nav nav-pills nav-justified" id='filters'>
+    {% for listboard_filter in listboard_view_filters %}
+	    <li class="{% if f == listboard_filter.name or e == listboard_filter.name %} active {% endif %}">
+	    	<a href="{% url listboard_filter_url %}?request_type={{ request_type }}&{{ listboard_filter.querystring }}">
+	    		{{ listboard_filter.label }}{% if f == listboard_filter.name or e == listboard_filter.name %}&nbsp;<i class="fa fa-check fa-fw"></i>{% endif %}
+	    	</a>
+	    </li>
+    {% endfor %}
+  </ul>
+ {% endif %}
 
-{% block listboard_panel %}
-	<a id="purchasereq_add" title="add purchase requisition" class="btn btn-sm btn-default" role="button" 
-        href="{{ purchase_req_add_url }}?next={{ purchase_req_listboard_url }}">
-            <i class="fa fa-plus fa-sm"></i> Add Purchase Requisition
-    </a>
-    <a id="return_to_home" title="go back" class="btn btn-sm btn-default" role="button" 
-        href="/">
-            <i class="fa fa-arrow-left fa-sm"></i> Go Back
-    </a>
-{% endblock listboard_panel %}
-
-</div> <!--end panel heading -->
-
+<div class="row">
+	<div id="toolbar">
+		<h3 style='font-weight:300;font-size: 32px;'>
+			{% if request_type == 'requests' %}	
+				<span style="font-size: 36px;"><img src="{% static 'procurement_dashboard/images/order.png' %}" width="30"></img></span> My{{request_type|title}} 
+				<a id="purchasereq_add" title="add purchase requisition" role="button" data-toggle="tooltip" data-placement="right" title="Add Purchase Requisition"
+					href="{{ purchase_req_add_url }}?next={{ purchase_req_listboard_url }},request_type&request_type={{request_type}}" style="padding:10px">
+	            	<span><img src="{% static 'procurement_dashboard/images/plus.png' %}" width="25"></img></span>
+	    		</a>
+			{% elif request_type == 'approvals' %}
+				<span class="iconify" data-icon="mdi-file-check" data-inline="false" style="font-size: 36px;"></span> My{{request_type|title}}
+			{% else %}
+				<span class="iconify" data-icon="fa-solid:check-double" data-inline="false"></span> Confirmation of Funds
+			{% endif %}
+		</h3>
+	</div>
+</div>
 
 <!-- begin table -->
 <div class="table table-responsive">
-<table class="table table-condensed table-hover small">
-<thead>
+<table 	class="table table-hover table-striped small" style="border-top:3px solid #cecece"
+		data-toggle="table"
+		data-toolbar="#toolbar"
+		data-toolbar-align="left"
+		data-filter-control="true"
+		data-show-columns="true"
+  		data-show-columns-toggle-all="true"
+		data-show-fullscreen="true"
+		data-pagination="true" >
+<thead style="background-color:#F0F8FF">
 
 {% block listboard_table_header %}
      <!-- begin results header -->
-    <th>#</th>
-    <th></th>
-    <th>Requisition Date</th>
-    <th>Requesting Study</th>
-    <th>Requested by</th>
-    <th>Approved by</th>
+    <th width="80%"></th>
+    <th data-field='req_date' data-sortable='true' data-filter-control="input"  data-width="100" data-align="center">Requisition Date</th>
+    <th data-field='req_study' data-sortable='true' data-filter-control="input">Requesting Study</th>
+    <th data-field='user_requested' data-sortable='true' data-filter-control="input">Requested by</th>
+    <th data-field='user_approved' data-sortable='true' data-filter-control="input">Approved by</th>
     <!-- end results header -->
 {% endblock listboard_table_header %}
 
@@ -57,20 +80,18 @@
 {% block listboard_table_body %}
 
     {% for result in results %}
-        <tr> 
-        
-        <td>{{ forloop.counter }}</td>
-
+        <tr>
         {% block listboard_table_button_column %}
-            <td style="white-space: nowrap">
+            <td "style="white-space: nowra;">
 			    <div class="btn-group">
 			 		{% purchase_requisition_button result %}
 			 		{% justification_required result as required %}
 			 		{% if required %}
 			 			{% vendor_justification_button result %}
 			 		{% endif %}
-			 		{% request_button result %} 
-			 		{% if result.approved %}
+			 		{% request_button result user %} 
+			 		{% request_approved result as approved %}
+			 		{% if approved %}
 			 			{% purchase_order_model result as add_purchase_order_href %}
 			 			{% if not result.purchase_order_model_obj and request.user|has_group:"Procurement" %}
 							<a 	id="purchaseorder_add_{{ prf_number }}" 
@@ -106,7 +127,8 @@
 
 {% endblock listboard_table_body %}
 
-</tbody></table>
+</tbody>
+</table>
 
 <!-- begin spacer rows -->
 <table>
@@ -124,22 +146,5 @@
 
 </div>  <!--end panel -->
 </div> <!--end panel-group -->
-</div>
-<div class="panel-group col-sm-2" id="sidebar">
-     <div class="panel panel-default">
-         <div class="panel-heading">
-             <h4 class="panel-title">
-                 <a data-toggle="collapse" data-parent="#sidebar" href="#sidebar-first">
-                 	<small><i class="fa fa-filter" aria-hidden="true"></i></small> Filters
-                 </a>
-             </h4>
-         </div>
-         <ul id="sidebar-first" class="list-group panel-collapse collapse">
-             <li class="list-group-item"><a href="#">Menu Item 1</a></li>
-             <li class="list-group-item"><a href="#">Menu Item 2</a></li>
-             <li class="list-group-item"><a href="#">Menu Item 3</a></li>
-         </ul>
-     </div>
-</div>
 <!-- end listboard main block -->
 {% endblock main %}

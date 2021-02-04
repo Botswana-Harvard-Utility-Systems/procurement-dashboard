@@ -56,6 +56,10 @@ h1 {
   margin: 0 0 10px 0;
 }
 
+.underline {
+	border-bottom: 1px solid black;
+}
+
 .header-info {
 	margin-bottom: 30px;
 }

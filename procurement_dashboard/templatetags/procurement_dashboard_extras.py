@@ -33,7 +33,7 @@ def request_approval_button(model_wrapper):
 
 
 @register.inclusion_tag('procurement_dashboard/buttons/request_button.html')
-def request_button(model_wrapper):
+def request_button(model_wrapper, user):
     title = ['Approval requests.']
     return dict(
         document_id=model_wrapper.document_id,
@@ -42,6 +42,7 @@ def request_button(model_wrapper):
         request_model_obj=model_wrapper.request_model_obj,
         request_approved=model_wrapper.request_approved,
         history_objects=model_wrapper.requests,
+        user=user,
         title=' '.join(title), )
 
 
@@ -66,6 +67,26 @@ def vendor_justification_button(model_wrapper):
         title=' '.join(title), )
 
 
+@register.inclusion_tag('procurement_dashboard/buttons/goods_received_note_button.html')
+def goods_received_note_button(model_wrapper):
+    title = ['Add Goods Received Note.']
+    return dict(
+        order_number=model_wrapper.order_number,
+        goods_received_model_obj=model_wrapper.goods_received_model_obj,
+        add_goods_received_href=model_wrapper.goods_received.href,
+        title=' '.join(title))
+
+
+@register.inclusion_tag('procurement_dashboard/buttons/purchase_invoice_button.html')
+def purchase_invoice_button(model_wrapper):
+    title = ['Add Purchase Invoice.']
+    return dict(
+        order_number=model_wrapper.order_number,
+        purchase_invoice_model_obj=model_wrapper.purchase_invoice_model_obj,
+        add_purchase_invoice_href=model_wrapper.purchase_invoice.href,
+        title=' '.join(title))
+
+
 @register.simple_tag
 def justification_required(model_wrapper):
     cost = 0
@@ -87,6 +108,11 @@ def bhp_allocations(model_wrapper):
     for allocation in allocations:
         names.append(f'{allocation.bhp_allocation.name}({allocation.percentage}%)')
     return ', '.join(names)
+
+
+@register.simple_tag
+def request_approved(model_wrapper):
+    return model_wrapper.request_approved
 
 
 @register.filter(name='has_group')

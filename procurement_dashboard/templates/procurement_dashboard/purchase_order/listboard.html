@@ -21,8 +21,9 @@
     <th>Order Date</th>
     <th>Agent</th>
     <th>BHP Allocation</th>
+    <th>Authorised</th>
     <th>Total</th>
-    <th></th>
+    <th>Invoice Status</th>
     <!-- end results header -->
 {% endblock listboard_table_header %}
 
@@ -43,11 +44,13 @@
 
 
 {% block listboard_table_columns %}
-    <td>{{result.object.vendor.name}}</td>
+    <td>{{result.vendor.name}}</td>
     <td nowrap>{{result.order_number}}</td>
     <td nowrap>{{result.order_date}}</td>
     <td nowrap>{{result.object.agent.first_name}} {{result.object.agent.last_name}}</td>
-    <td nowrap>{{result.object.bhp_allocation.name}}</td>
-    <td nowrap><b>P</b> {{result.purchase_order_total}}</td>
+    <td nowrap>{{result.bhp_allocation}}</td>
+    <td nowrap>{{result.authorised|default:"--"}}</td>
+    <td nowrap><b>P</b> {{result.purchase_items_total}}</td>
+    <td nowrap>{{result.invoice_status}}</td>
 
 {% endblock listboard_table_columns %}

@@ -1,5 +1,9 @@
 import os
+import base64
+from io import BytesIO
 from django.apps import apps as django_apps
+from django.conf import settings
+from pdf2image import convert_from_path
 
 from .report_view_mixin import ReportViewMixin
 from ....utils import generate_pdf
@@ -42,6 +46,8 @@ class PdfResponseMixin(ReportViewMixin):
                 model_obj.file = f'{upload_to}{self.get_pdf_name()}.pdf'
                 model_obj.save()
             context.update(file_name=output_filename)
+        pdf_images_bytes = self.pdf_images_as_bytes(context.get('result'))
+        context.update(pdf_images_bytes=pdf_images_bytes)
         return context
 
     @property
@@ -60,3 +66,15 @@ class PdfResponseMixin(ReportViewMixin):
 
     def filter_options(self, **kwargs):
         return {}
+
+    def pdf_images_as_bytes(self, model_obj):
+        base_dir = settings.BASE_DIR
+        pdf_path = f'{base_dir}{model_obj.file.url}'
+        image_bytes = []
+        pdf_images = convert_from_path(pdf_path)
+        buffer = BytesIO()
+        for pdf_image in pdf_images:
+            pdf_image.save(buffer, "PNG")
+            img_str = base64.b64encode(buffer.getvalue()).decode('ascii')
+            image_bytes.append(img_str)
+        return image_bytes

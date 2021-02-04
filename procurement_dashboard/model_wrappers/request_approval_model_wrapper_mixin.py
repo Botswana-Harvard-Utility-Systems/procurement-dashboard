@@ -73,18 +73,28 @@ class RequestApprovalModelWrapperMixin:
         return wrapped_entries
 
     @property
+    def request_by_approver(self):
+        try:
+            request_by_approver = self.request_model_cls.objects.get(
+                request_approval=self.request_approval_model_obj,
+                request_to=self.request_to)
+        except self.request_model_cls.DoesNotExist:
+            return None
+        else:
+            request_type = self.request_type if self.request_type else None
+            order_number = self.order_number if self.order_number else None
+            return self.request_model_wrapper_cls(
+                request_by_approver, request_type=request_type, order_number=order_number)
+
+    @property
     def approval_request(self):
         request = self.request_model_cls(
             request_approval=self.request_approval_model_obj)
         request_type = self.request_type if self.request_type else None
-        return self.request_model_wrapper_cls(request, request_type=request_type)
+        order_number = self.order_number if self.order_number else None
+        return self.request_model_wrapper_cls(
+            request, request_type=request_type, order_number=order_number)
 
     @property
     def request_approved(self):
-        approved = False
-        requests = self.request_model_cls.objects.filter(
-            request_approval=self.request_approval_model_obj)
-        for req in requests:
-            if req.status == 'approved':
-                approved = True
-        return approved
+        return self.request_approval_model_obj.approved

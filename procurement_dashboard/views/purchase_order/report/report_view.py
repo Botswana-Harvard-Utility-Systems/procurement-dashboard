@@ -1,17 +1,19 @@
-import base64
-from io import BytesIO
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import TemplateRequestContextMixin
+from django.http.response import HttpResponseRedirect
+from django.urls.base import reverse
 from edc_navbar import NavbarViewMixin
-from pdf2image import convert_from_path
 
 
 from ..view_mixin import PdfResponseMixin, PurchaseOrderCalcMixin
+
+
+class ReportViewError(Exception):
+    pass
 
 
 class ReportView(PdfResponseMixin, PurchaseOrderCalcMixin, NavbarViewMixin,
@@ -31,10 +33,7 @@ class ReportView(PdfResponseMixin, PurchaseOrderCalcMixin, NavbarViewMixin,
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         order_number = kwargs.get('order_number', None)
-        pdf_images_bytes = self.pdf_images_as_bytes(context.get('result'))
-        context.update(
-            order_number=order_number,
-            pdf_images_bytes=pdf_images_bytes)
+        context.update(order_number=order_number)
         return context
 
     def filter_options(self, **kwargs):
@@ -54,14 +53,25 @@ class ReportView(PdfResponseMixin, PurchaseOrderCalcMixin, NavbarViewMixin,
     def pdf_template(self):
         return self.get_template_from_context(self.report_template)
 
-    def pdf_images_as_bytes(self, model_obj):
-        base_dir = settings.BASE_DIR
-        pdf_path = f'{base_dir}{model_obj.file.url}'
-        image_bytes = []
-        pdf_images = convert_from_path(pdf_path)
-        buffer = BytesIO()
-        for pdf_image in pdf_images:
-            pdf_image.save(buffer, "PNG")
-            img_str = base64.b64encode(buffer.getvalue()).decode('ascii')
-            image_bytes.append(img_str)
-        return image_bytes
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            purchase_invoice = self.purchase_invoice(
+                    order_number=kwargs.get('order_number'))
+            if request.POST.get('publish'):
+                if purchase_invoice:
+                    purchase_invoice.published = True
+                    purchase_invoice.save()
+            elif request.POST.get('_update'):
+                invoice_status = request.POST.get('invoice_status')
+                if invoice_status == 'Paid':
+                    purchase_invoice.paid = True
+                else:
+                    purchase_invoice.paid = False
+                purchase_invoice.save()
+            try:
+                url_name = request.url_name_data['purchase_order_report_url']
+            except KeyError as e:
+                raise ReportViewError(
+                    f'Invalid action \'post_action_url\'. Got {e}. See {repr(self)}.')
+            url = reverse(url_name, kwargs=kwargs)
+            return HttpResponseRedirect(url)

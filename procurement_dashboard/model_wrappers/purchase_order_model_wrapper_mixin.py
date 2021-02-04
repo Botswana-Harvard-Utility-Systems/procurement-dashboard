@@ -49,4 +49,6 @@ class PurchaseOrderModelWrapperMixin:
 
     @property
     def order_number(self):
-        self.purchase_order_model_obj.order_number
+        if self.purchase_order_model_obj:
+            return self.purchase_order_model_obj.order_number
+        return None
