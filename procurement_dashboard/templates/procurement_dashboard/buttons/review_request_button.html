@@ -1,0 +1,14 @@
+{% if request_model_obj %}
+	<a 	id="request_add_{{ request.document_id }}" 
+		title="{{ title }}"
+		class="btn {% if request_model_obj.status == 'pending' %}btn-info{% else %}btn-default{% endif %} active btn-sm" data-toggle="tooltip"  data-placement="right"
+		href="{{ add_request_href }}">
+		{% if request_model_obj.status == 'pending' %}
+			<i style="color:#000" class="fa fa-binoculars"></i> Review Request
+		{% elif request_model_obj.status == 'approved' %}
+			Approved <i style="color:green" class="fa fa-check-circle"></i>		
+		{% elif request_model_obj.status == 'rejected' %}
+			Rejected <i style="color:red" class="fa fa-times-circle"></i>
+		{% endif %}
+	</a>
+{% endif %}

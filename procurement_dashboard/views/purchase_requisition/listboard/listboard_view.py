@@ -87,5 +87,10 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
         requests = request.objects.filter(status=status)
         if requests:
             for req in requests:
+                request_type = self.request.GET.get('request_type')
+                user_logged = self.request.user.id
+                if request_type in ['approvals', 'confirmfunds']:
+                    if req.request_to.id != user_logged:
+                        continue
                 ids.append(req.request_approval.document_id)
         return ids

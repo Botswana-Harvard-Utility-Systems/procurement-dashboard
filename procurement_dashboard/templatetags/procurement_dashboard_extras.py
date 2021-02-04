@@ -46,6 +46,17 @@ def request_button(model_wrapper, user):
         title=' '.join(title), )
 
 
+@register.inclusion_tag('procurement_dashboard/buttons/review_request_button.html')
+def review_request_button(model_wrapper, user):
+    request = model_wrapper.request_to_user(user)
+    title = ['Review request']
+    return dict(
+        document_id=model_wrapper.document_id,
+        add_request_href=request.href,
+        request_model_obj=request,
+        title=' '.join(title), )
+
+
 @register.inclusion_tag('procurement_dashboard/buttons/pending_request_button.html')
 def pending_request_button(model_wrapper):
     title = ['Edit request approval form.']

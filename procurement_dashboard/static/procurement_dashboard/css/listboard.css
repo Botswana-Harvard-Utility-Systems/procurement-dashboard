@@ -6,14 +6,15 @@
     margin-right: 15px;
 }
 #filters li a{
-    padding: 20px 15px;
     font-size: 17px;
-    font-weight: 600;
+    font-weight: 500;
     color: #25283d;
     border-radius: 0;
-    margin-right: 0;
+    margin-right: 30px;
+    border-radius: 25px;
     border: none;
     position: relative;
+    background-color: rgba(236, 240, 241, 1);
     transition: all 0.5s ease 0s;
 }
 

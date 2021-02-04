@@ -98,3 +98,10 @@ class RequestApprovalModelWrapperMixin:
     @property
     def request_approved(self):
         return self.request_approval_model_obj.approved
+
+    def request_to_user(self, user):
+        request = self.request_approval_model_obj.request_set.filter(
+            request_to__id=user.id)
+        if request and len(request) == 1:
+            request_type = self.request_type if self.request_type else None
+            return self.request_model_wrapper_cls(request[0], request_type=request_type)

@@ -1,14 +1,18 @@
 import re
 
+from dateutil.relativedelta import relativedelta
+from django.apps import apps as django_apps
 from django.contrib.auth import get_user
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.utils.decorators import method_decorator
+from edc_base.utils import get_utcnow
 from edc_base.view_mixins import EdcBaseViewMixin
 from edc_dashboard.view_mixins import ListboardFilterViewMixin, SearchFormViewMixin
 from edc_dashboard.views import ListboardView
 from edc_navbar import NavbarViewMixin
 
+from ...filters import POListboardFilters
 from ....model_wrappers import PurchaseOrderModelWrapper
 
 
@@ -23,6 +27,7 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
 
     model = 'procurement.purchaseorder'
     model_wrapper_cls = PurchaseOrderModelWrapper
+    listboard_view_filters = POListboardFilters()
     navbar_name = 'procurement_dashboard'
     navbar_selected_item = 'purchase_order'
     search_form_url = 'purchase_order_listboard_url'
@@ -42,6 +47,11 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
         if kwargs.get('order_number'):
             options.update(
                 {'order_number': kwargs.get('order_number')})
+        payment_filter = options.get('invoicepaid__is', '')
+        if 'invoicepaid__is' in options:
+            options.pop('invoicepaid__is')
+            ids = self.purchaseinvoice_ids(payment_filter)
+            options.update({'order_number__in': ids})
         return options
 
     def get_queryset(self):
@@ -60,3 +70,19 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
         if re.match('^[A-Z]+$', search_term):
             q = Q(first_name__exact=search_term)
         return q
+
+    def purchaseinvoice_ids(self, status):
+        ids = []
+        invoices = None
+        purchaseinvoice = django_apps.get_model('procurement.purchaseinvoice')
+        if status == 'due':
+            date_due = get_utcnow() - relativedelta(month=1)
+            invoices = purchaseinvoice.objects.filter(
+                invoice_date__gte=date_due,
+                paid=False)
+        else:
+            invoices = purchaseinvoice.objects.filter(paid=status)
+        if invoices:
+            for invoice in invoices:
+                ids.append(invoice.order_number)
+        return ids

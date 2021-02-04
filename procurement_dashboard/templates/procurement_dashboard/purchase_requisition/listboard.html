@@ -62,7 +62,8 @@
 		data-show-columns="true"
   		data-show-columns-toggle-all="true"
 		data-show-fullscreen="true"
-		data-pagination="true" >
+		data-pagination="true"
+ >
 <thead style="background-color:#F0F8FF">
 
 {% block listboard_table_header %}
@@ -89,7 +90,11 @@
 			 		{% if required %}
 			 			{% vendor_justification_button result %}
 			 		{% endif %}
-			 		{% request_button result user %} 
+			 		{% if request_type == 'requests' %}
+			 			{% request_button result user %}
+			 		{% elif request_type == 'approvals' or request_type == 'confirmfunds' %}
+			 			{% review_request_button result user %}
+			 		{% endif %}
 			 		{% request_approved result as approved %}
 			 		{% if approved %}
 			 			{% purchase_order_model result as add_purchase_order_href %}
@@ -122,7 +127,6 @@
 		    </td>
         {% endblock listboard_table_columns %}
         </tr>
-
     {% endfor %}
 
 {% endblock listboard_table_body %}
