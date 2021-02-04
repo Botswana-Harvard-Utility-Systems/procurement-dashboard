@@ -144,6 +144,7 @@
 	        <form action="{% url email_report_url %}"  method="post" id="email-form">
 				<div class="modal-body">
 					{% csrf_token %}
+					<input name="order_number" type="hidden" class="form-control" value="{{order_number}}" />
 		            <div class="form-group col-md-12">
 						<input name="sender_email" type="email" class="form-control" value="{{result.company.address.email}}" placeholder="From" required />
 		            </div>
@@ -254,7 +255,7 @@
 		<div class="row p-4">
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <span class="glyphicon glyphicon-list"></span> Other Document Links
+                    <span class="glyphicon glyphicon-list"></span> Other Form Links
                     <div class="pull-right action-buttons">
                         <div class="btn-group pull-right">
                             <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
@@ -273,20 +274,33 @@
                             <div class="checkbox">
                                 <input type="checkbox" id="checkbox" />
                                 <label for="checkbox">
-                                    List group item heading
+                                    <a href="{{wrapped_prf.href}}">Purchase Requisition</a>
                                 </label>
                             </div>
                             <div class="pull-right action-buttons">
                                 <a href=""><span class="glyphicon glyphicon-download"></span></a>
                             </div>
-                        </li>           
+                        </li>
+                        {% if wrapped_justification %}
+                         <li class="list-group-item">
+                            <div class="checkbox">
+                                <input type="checkbox" id="checkbox" />
+                                <label for="checkbox">
+                                    <a href="{{wrapped_justification.href}}">Vendor Justification</a>
+                                </label>
+                            </div>
+                            <div class="pull-right action-buttons">
+                                <a href=""><span class="glyphicon glyphicon-download"></span></a>
+                            </div>
+                        </li>
+                        {% endif %}           
                     </ul>
                 </div>
                 <div class="panel-footer">
                     <div class="row">
                         <div>
                             <h6>
-                                Total Count <span class="label label-info">25</span></h6>
+                                Total Count <span class="label label-info">2</span></h6>
                         </div>
                     </div>
                 </div>

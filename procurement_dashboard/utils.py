@@ -5,6 +5,7 @@ from django.contrib.staticfiles import finders
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.template.loader import get_template
+from django.urls.base import reverse
 from io import BytesIO
 from procurement.forms import ReportEmailForm
 
@@ -90,4 +91,6 @@ def email_report(request):
             if recipient_email and sender_email:
                 send_mail(subject, message, sender_email, [recipient_email, ])
                 report_email_form.save()
-                return redirect('purchase_order_report_url')
+                order_number = request.POST.get('order_number')
+                return redirect(reverse('procurement_dashboard:purchase_order_report_url',
+                               kwargs=dict(order_number=order_number)))
