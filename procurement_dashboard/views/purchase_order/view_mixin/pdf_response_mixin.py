@@ -15,7 +15,7 @@ class PdfResponseMixin(ReportViewMixin):
     model = None
 
     def get_pdf_name(self):
-        return self.pdf_name
+        return f'{self.kwargs.get("order_number")}'
 
     def check_upload_dir_exists(self, upload_dir):
         file_path = 'media/%(upload_dir)s' % {'upload_dir': upload_dir}
@@ -46,7 +46,7 @@ class PdfResponseMixin(ReportViewMixin):
                 model_obj.file = f'{upload_to}{self.get_pdf_name()}.pdf'
                 model_obj.save()
             context.update(file_name=output_filename)
-        pdf_images_bytes = self.pdf_images_as_bytes(context.get('result'))
+        pdf_images_bytes = self.pdf_images_as_bytes(model_obj)
         context.update(pdf_images_bytes=pdf_images_bytes)
         return context
 

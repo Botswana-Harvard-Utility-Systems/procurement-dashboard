@@ -105,3 +105,16 @@ class RequestApprovalModelWrapperMixin:
         if request and len(request) == 1:
             request_type = self.request_type if self.request_type else None
             return self.request_model_wrapper_cls(request[0], request_type=request_type)
+
+    @property
+    def approval_by(self):
+        approvals = []
+        requests = self.request_model_cls.objects.filter(
+            request_approval=self.request_approval_model_obj)
+        for request in requests:
+            attr = getattr(request, 'request_to') if request.status == 'approved' else None
+            if attr:
+                approvals.append(f'{(attr.first_name)[:1]}. {attr.last_name}')
+            else:
+                continue
+        return ', '.join(approvals)

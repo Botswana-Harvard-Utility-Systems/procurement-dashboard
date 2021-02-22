@@ -24,7 +24,8 @@ class VendorJustificationModelWrapperMixin:
         """
         model_obj = self.vendor_justification_model_obj or self.vendor_justification_cls(
             **self.create_vendor_justification_options)
-        return self.vendor_justification_model_wrapper_cls(model_obj=model_obj)
+        return self.vendor_justification_model_wrapper_cls(
+            model_obj=model_obj, request_type=self.request_type)
 
     @property
     def vendor_justification_cls(self):
@@ -36,7 +37,8 @@ class VendorJustificationModelWrapperMixin:
         unpersisted vendor justification model instance.
         """
         options = dict(
-            prf_number=self.prf_number, )
+            prf_number=self.prf_number,
+            selected_vendor=self.object.selected_vendor, )
         return options
 
     @property

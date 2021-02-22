@@ -16,8 +16,8 @@ class ReportViewError(Exception):
     pass
 
 
-class ReportView(PdfResponseMixin, PurchaseOrderCalcMixin, NavbarViewMixin,
-                 EdcBaseViewMixin, TemplateRequestContextMixin, TemplateView):
+class ReportView(EdcBaseViewMixin, PurchaseOrderCalcMixin, PdfResponseMixin,
+                 NavbarViewMixin, TemplateRequestContextMixin, TemplateView):
 
     template_name = 'procurement_dashboard/purchase_order/dashboard.html'
     report_template = 'purchase_order_report_template'

@@ -42,7 +42,7 @@
 					<td>{{order_number}}</td>
 					<td>{{result.order_date}}</td>
 					<td>{{prf_obj.selected_vendor.name}}</td>
-					<td>{{result.agent|capfirst}}</td>
+					<td>{{result.agent.first_name|capfirst}} {{result.agent.last_name|capfirst}}</td>
 					<td>
 						{% for allocation in prf_obj.allocation_set.all %}
 	            			{{allocation.bhp_allocation.name}}({{allocation.percentage}}%), 
@@ -90,9 +90,7 @@
 					<button type="button" class="btn btn-info btn-sm" id="email" data-toggle="modal" data-target="#emailModal">
 						<i class="fa fa-envelope" aria-hidden="true"></i> Email
 					</button>
-					<a class="btn btn-info btn-sm" id="print">
-						<i class="fa fa-print" aria-hidden="true"></i> Print
-					</a>
+					
 				</div>
 			</div>
 			<div class="col-sm-6">

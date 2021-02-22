@@ -95,7 +95,9 @@ class ReportViewMixin(ContextMixin):
         add_request_href = self.wrapped_purchase_order.approval_request.href
         approved = purchase_order.authorised
         auth_one_request = self.wrapped_by_first_approver.request_by_approver
+        auth_one_sign = self.user_signature(user=auth_one_request.object.request_to) if auth_one_request else None
         auth_two_request = self.wrapped_by_second_approver.request_by_approver
+        auth_two_sign = self.user_signature(user=auth_two_request.object.request_to) if auth_two_request else None
         goods_received = self.goods_received_note(order_number=order_number)
         purchase_invoice = self.purchase_invoice(order_number=order_number)
         prep_sign = self.user_signature(user=purchase_order.agent)
@@ -110,5 +112,7 @@ class ReportViewMixin(ContextMixin):
             purchase_invoice=purchase_invoice,
             goods_received=goods_received,
             prep_sign=prep_sign,
+            auth_one_sign=auth_one_sign,
+            auth_two_sign=auth_two_sign,
             approved=approved)
         return context

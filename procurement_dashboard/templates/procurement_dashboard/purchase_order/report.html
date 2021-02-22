@@ -53,11 +53,13 @@
   				{% endif %}
   			</tr>
   			<tr>
-  				<td>Signature :</td>
-  				<td></td>
+  				 <td>Signature:</td>
+  				<td><img src="{{prep_sign.url}}" width="80" height="30" /></td>
   				{% if auth_one_request %}
-  					<td>Signature : </td>
-  					<td>______________</td>
+  					{% if auth_one_request.object.status == 'approved' %}
+  						<td>Signature : </td>
+  						<td><img src="{{auth_one_sign.approval_sign.url}}" width="80" height="30" /></td>
+  					{% endif %}
   				{% else %}
   					<td>Signature :</td>
   					<td>______________</td>
