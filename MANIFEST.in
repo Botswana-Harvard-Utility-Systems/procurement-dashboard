@@ -1,2 +1,3 @@
 include AUTHORS CHANGES README.md LICENCE
 recursive-include procurement_dashboard/templates *
+recursive-include procurement_dashboard/static *

@@ -62,12 +62,6 @@
 		       <p class="h4"><a href="{% url purchase_req_listboard_url %}?request_type=confirmfunds&f=all" class="btn btn-default btn-md"><i class="fa fa-money-check"></i> Funds Confirmation</a></p>
 	     </div>
    </div>
-   <div class="col-md-3">
-	     <div class="box">
-		       <div class="icon"><i class="ion-ios-analytics-outline" style="color: #ff689b;"></i></div>
-		       <p class="h4"><a href="{% url credit_card_listboard_url %}" class="btn btn-default btn-md"><i class="fa fa-credit-card"></i> Credit Card Request</a></p>
-	     </div>
-   </div>
 </div>
 <hr/>
 {% if request.user|has_group:"Procurement" or request.user|has_group:"Finance" %}

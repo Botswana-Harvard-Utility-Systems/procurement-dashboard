@@ -21,7 +21,7 @@
 	<div class="btn-group">
 	  <button title="History" type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
 	      <span class="caret"></span></button>
-	      <ul class="dropdown-menu" role="menu">
+	      <ul class="dropdown-menu" role="menu" style="position:relative !important;">
 	        <li class="dropdown-header">{{ title|default:"History" }}</li>
 	        {% for obj in history_objects reversed %}
 	          <li><a href="{{ obj.get_absolute_url }}?next={{ obj.next_url }}&{{ obj.querystring }}">
