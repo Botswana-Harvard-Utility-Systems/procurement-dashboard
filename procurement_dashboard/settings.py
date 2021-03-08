@@ -144,11 +144,13 @@ DASHBOARD_URL_NAMES = {
     'purchase_order_dashboard_url': 'procurement_dashboard:purchase_order_dashboard_url',
     'purchase_order_listboard_url': 'procurement_dashboard:purchase_order_listboard_url',
     'purchase_order_report_url': 'procurement_dashboard:purchase_order_report_url',
-    'purchase_req_listboard_url': 'procurement_dashboard:purchase_req_listboard_url'
+    'purchase_req_listboard_url': 'procurement_dashboard:purchase_req_listboard_url',
+    'credit_card_listboard_url': 'procurement_dashboard:credit_card_listboard_url'
 }
 
 DASHBOARD_BASE_TEMPLATES = {
     'purchase_order_listboard_template': 'procurement_dashboard/purchase_order/listboard.html',
     'purchase_req_listboard_template': 'procurement_dashboard/purchase_requisition/listboard.html',
-    'purchase_order_report_template': 'procurement_dashboard/purchase_order/report.html'
+    'purchase_order_report_template': 'procurement_dashboard/purchase_order/report.html',
+    'credit_card_listboard_template': 'procurement_dashboard/credit_card/listboard.html'
 }

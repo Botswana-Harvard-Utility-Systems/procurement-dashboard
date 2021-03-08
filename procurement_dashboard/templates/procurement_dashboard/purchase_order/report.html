@@ -58,15 +58,17 @@
   				{% if auth_one_request %}
   					{% if auth_one_request.object.status == 'approved' %}
   						<td>Signature : </td>
-  						<td><img src="{{auth_one_sign.approval_sign.url}}" width="80" height="30" /></td>
+  						<td><img src="{{auth_one_sign.url}}" width="80" height="30" /></td>
   					{% endif %}
   				{% else %}
   					<td>Signature :</td>
   					<td>______________</td>
   				{% endif %}
   				{% if auth_two_request %}
-  					<td>Signature :</td>
-  					<td>{{auth_two_request.approval_sign}}</td>
+  					{% if auth_two_request.object.status == 'approved' %}
+  						<td>Signature :</td>
+  						<td><img src="{{auth_two_sign.url}}" width="80" height="30" /></td>
+  					{% endif %}
   				{% else %}
   					<td>Signature :</td>
   					<td>______________</td>

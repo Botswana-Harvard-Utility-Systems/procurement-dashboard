@@ -21,6 +21,15 @@ def purchase_requisition_button(model_wrapper):
         title=' '.join(title))
 
 
+@register.inclusion_tag('procurement_dashboard/buttons/credit_card_auth_button.html')
+def credit_card_auth_button(model_wrapper):
+    title = ['Edit credit card authorization form.']
+    return dict(
+        ccp_number=model_wrapper.object.ccp_number,
+        href=model_wrapper.href,
+        title=' '.join(title))
+
+
 @register.inclusion_tag('procurement_dashboard/buttons/request_approval_button.html')
 def request_approval_button(model_wrapper):
     title = ['Edit request approval form.']

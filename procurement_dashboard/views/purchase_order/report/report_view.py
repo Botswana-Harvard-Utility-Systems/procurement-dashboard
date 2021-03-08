@@ -1,4 +1,6 @@
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 
@@ -7,7 +9,7 @@ from edc_dashboard.view_mixins import TemplateRequestContextMixin
 from django.http.response import HttpResponseRedirect
 from django.urls.base import reverse
 from edc_navbar import NavbarViewMixin
-
+from smtplib import SMTPException
 
 from ..view_mixin import PdfResponseMixin, PurchaseOrderCalcMixin
 
@@ -16,7 +18,7 @@ class ReportViewError(Exception):
     pass
 
 
-class ReportView(EdcBaseViewMixin, PurchaseOrderCalcMixin, PdfResponseMixin,
+class ReportView(EdcBaseViewMixin, PdfResponseMixin, PurchaseOrderCalcMixin,
                  NavbarViewMixin, TemplateRequestContextMixin, TemplateView):
 
     template_name = 'procurement_dashboard/purchase_order/dashboard.html'
@@ -68,6 +70,22 @@ class ReportView(EdcBaseViewMixin, PurchaseOrderCalcMixin, PdfResponseMixin,
                 else:
                     purchase_invoice.paid = False
                 purchase_invoice.save()
+            elif request.POST.get('return'):
+                if purchase_invoice:
+                    reasons = request.POST.get('reasons')
+                    prf = self.purchase_requisition(request.POST.get('prf_number'))
+                    subject = f'Purchase Order {purchase_invoice.order_number} Rejected.'
+                    msg = (f'Purchase order number {purchase_invoice.order_number} has been rejected '
+                           f'by finance for the following reason(s): {reasons}. Please'
+                           ' review it and republish.')
+                    try:
+                        send_mail(
+                            subject, msg, request.user.email, [prf.request_by.email, ], fail_silently=False)
+                    except SMTPException as e:
+                        raise ValidationError(f'There was an error sending an email: {e}')
+                    else:
+                        purchase_invoice.published = False
+                        purchase_invoice.save()
             try:
                 url_name = request.url_name_data['purchase_order_report_url']
             except KeyError as e:
