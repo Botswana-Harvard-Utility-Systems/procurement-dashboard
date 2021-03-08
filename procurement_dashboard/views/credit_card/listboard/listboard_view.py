@@ -44,8 +44,11 @@ class ListboardView(EdcBaseViewMixin, NavbarViewMixin,
         if kwargs.get('ccp_number'):
             options.update(
                 {'ccp_number': kwargs.get('ccp_number')})
-        options.update({'request_by': get_user(request)})
         return options
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(Q(request_by=get_user(self.request)) | Q(card_holder=get_user(self.request)))
 
     def extra_search_options(self, search_term):
         q = Q()
