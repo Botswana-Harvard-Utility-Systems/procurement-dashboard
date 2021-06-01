@@ -1,0 +1,83 @@
+{% extends 'edc_base/base.html' %}
+
+{% load static %}
+
+{% block extra-scripts %}
+{{ block.super }}
+<script>
+
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+    $("#success-alert").fadeTo(1000, 500).slideUp(500, function(){
+        $("#success-alert").slideUp(500);
+    });    
+});
+
+</script>
+{% endblock extra-scripts %} 
+
+{% block extra-styles %}
+{{ block.super }}
+<style>
+  .panel-extended {
+    min-height: 200px;
+    overflow-y: scroll;
+  }
+  
+  .btn {
+  	border-radius: 10px;
+  	padding:15px 20px;
+  	background-color: white;
+  	border: 2px solid #e7e7e7;
+  }
+  
+  .btn {
+   border-radius: 10px;
+   background: linear-gradient(to right, #E0EEEE, #7AC5CD) !important;
+   border: none;
+   color: #000;
+   text-align: center;
+   text-transform: uppercase;
+   font-size: 14px;
+   font-weight: 500;
+   padding: 17px;
+   width: 230px;
+   transition: all 0.4s;
+   cursor: pointer;
+   margin: 5px;
+ }
+ 
+  .btn span {
+   cursor: pointer;
+   display: inline-block;
+   position: relative;
+   transition: 0.4s;
+ }
+
+ .btn:hover {
+ 	opacity: 1;
+   	background-color: #000;
+ }
+
+  
+  .po {
+  	border: 2px solid #008CBA;
+  }
+  </style>
+{% endblock %}
+
+
+
+{% block topbar_navbar_extra_items %}
+
+    {{ block.super }}
+    {{ navbar.name }}
+
+{% endblock topbar_navbar_extra_items %}
+
+
+{% block modals %}
+
+{{ block.super }}
+    {% include 'procurement_dashboard/help_modal.html' %}
+{% endblock modals %}

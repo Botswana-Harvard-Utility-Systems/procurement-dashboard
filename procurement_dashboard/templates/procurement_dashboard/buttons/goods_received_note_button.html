@@ -1,0 +1,9 @@
+ <a id="goodsreceivednote_add_{{ order_number }}" title="{{ title }}" href="{{ add_goods_received_href }}"
+ 	{% if goods_received_model_obj %} style='color:green;' {% endif %}>
+ 	Goods Received Note
+ </a>
+ {% if goods_received_model_obj %}
+ 	<span class="badge badge-success pull-right" style='background-color:green'>KEYED</span> 
+ {% else %}
+ 	<span class="badge badge-success pull-right" style='background-color:#259AD0'>NEW</span> 
+ {% endif %}

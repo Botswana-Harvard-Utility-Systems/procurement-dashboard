@@ -1,0 +1,12 @@
+<a 	id="vendorjustification_add_{{ prf_number }}" 
+	title="{{ title }}"
+	{% if vendor_justification_model_obj %} 
+		class="btn btn-success btn-sm" data-toggle="tooltip"  data-placement="right"
+		href="{{ add_justification_href }}">
+	    Vendor Justification
+	{% else %}
+		class="btn btn-warning btn-sm" data-toggle="tooltip"  data-placement="right"
+		href="{{ add_justification_href }}">
+	    Vendor Justification
+	{% endif %}
+</a>

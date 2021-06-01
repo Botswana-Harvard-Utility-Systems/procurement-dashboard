@@ -1,0 +1,249 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Purchase Order</title>
+    <link type="text/css" rel="stylesheet" href="{% static 'procurement_dashboard/css/report.css' %}">
+  </head>
+  <body>
+  <div id="footer_datetime">
+  		{% now "SHORT_DATETIME_FORMAT" %}
+    </div>
+  	<div id="footer_pages">
+  		Page <pdf:pagenumber> of <pdf:pagecount>
+    </div>
+    <div id="footer_signatures">
+    <table>
+  			<tr>
+  				<td>Prepared by :</td>
+  				<td>{{result.agent.first_name}} {{result.agent.last_name}}</td>
+  				{% if auth_one_request %}
+  					<td>Authorised by (1) :</td>
+  					<td>{{result.first_approver.first_name}} {{result.first_approver.last_name}}</td>
+  				{% else %}
+  					<td>Authorised by (1) :</td>
+  					<td>______________</td>
+  				{% endif %}
+  				{% if auth_two_request %}
+  					<td>Authorised by (2) :</td>
+  					<td>{{result.second_approver.first_name}} {{result.second_approver.last_name}}</td>
+  				{% else %}
+  					<td>Authorised by (2) :</td>
+  					<td>______________</td>
+  				{% endif %}
+  			</tr>
+  			<tr>
+  				<td>Date :</td>
+  				<td>{{result.created|date:'Y-m-d'}}</td>
+  				{% if auth_one_request %}
+  					<td>Date :</td>
+  					<td>{{auth_one_request.date_reviewed}}</td>
+  				{% else %}
+  					<td>Date :</td>
+  					<td>______________</td>
+  				{% endif %}
+  				{% if auth_two_request %}
+  					<td>Date :</td>
+  					<td>{{auth_two_request.date_reviewed}}</td>
+  				{% else %}
+  					<td>Date :</td>
+  					<td>______________</td>
+  				{% endif %}
+  			</tr>
+  			<tr>
+  				 <td>Signature:</td>
+  				<td><img src="{{prep_sign.url}}" width="80" height="30" /></td>
+  				{% if auth_one_request %}
+  					{% if auth_one_request.object.status == 'approved' %}
+  						<td>Signature : </td>
+  						<td><img src="{{auth_one_sign.url}}" width="80" height="30" /></td>
+  					{% endif %}
+  				{% else %}
+  					<td>Signature :</td>
+  					<td>______________</td>
+  				{% endif %}
+  				{% if auth_two_request %}
+  					{% if auth_two_request.object.status == 'approved' %}
+  						<td>Signature :</td>
+  						<td><img src="{{auth_two_sign.url}}" width="80" height="30" /></td>
+  					{% endif %}
+  				{% else %}
+  					<td>Signature :</td>
+  					<td>______________</td>
+  				{% endif %}
+  			</tr>
+  		</table>
+    </div>
+    <header class="clearfix">
+    	<h1>Purchase Order</h1>
+      	<div id="logo">
+        	<img src="{% static 'procurement_dashboard/images/logo.png' %}" />
+      	</div>
+      	<table class="header-info">
+      		<tr>
+      			<td>
+			      	<table>
+			      		<tr><td>{{result.company.address.postal_address}}</td></tr>
+				      	<tr>
+				      		<td>
+				      			<p>Telephone</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>+267{{result.company.address.telephone_contacts}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Fax</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>+267{{result.company.address.fax}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Tax Registration</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>{{result.company.tax_registration}}</p>
+				      		</td>
+				      	</tr>
+				      </table>
+      			</td>
+      			<td class="separator"></td>
+      			<td>
+      				<table>
+				      	<tr>
+				      		<td class="trailing-value">
+				      			<p>{{justification_obj.selected_vendor.name}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>{{prf_obj.selected_vendor.address.postal_address}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Contact Person</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>{{prf_obj.selected_vendor.contact_person}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Telephone</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<p>+267{{prf_obj.selected_vendor.address.telephone_contacts}}</p>
+				      		</td>
+				      	</tr>
+				      	<tr>
+				      		<td>
+				      			<p>Email</p>
+				      		</td>
+				      		<td class="trailing-value">
+				      			<a href="mailto:{{result.vendor.email}}">{{prf_obj.selected_vendor.address.email}}</a>
+				      		</td>
+				      	</tr>
+				      </table>
+      			</td>
+      		</tr>
+      	</table>
+      	<table class="instructions">
+      		<tr>
+      			<td style="width:75%">PLEASE SUPPLY THE FOLLOWING ITEMS AS PER YOUR QUOTATION:</td>
+      			<td></td>
+      			<td>AGENT: {{result.agent|capfirst}}</td>
+      		</tr>
+      	</table>
+    </header>
+    <main>
+    	<table class="main-header">
+    		<thead>
+	   			<tr style="font-weight:bold;">
+	   				<td>Supplier Reference</td>
+	   				<td class="separator"></td>
+	   				<td>Date</td>
+	   				<td class="separator"></td>
+	   				<td>Order Number</td>
+	   			</tr>
+   			</thead>
+   			<tbody>
+   				<tr>
+	   				<td>{{prf_obj.selected_vendor.name}}</td>
+	   				<td class="separator"></td>
+	   				<td>{% now "SHORT_DATE_FORMAT" %}</td>
+	   				<td class="separator"></td>
+	   				<td>{{order_number}}</td>
+	   			</tr>
+   			</tbody>
+    	</table>
+      	<table>
+	        <thead>
+	          <tr>
+	            <th class="catalog">Catalog</th>
+	            <th class="desc">Description</th>
+	            <th class="code">Item Code</th>
+	            <th>Ordered</th>
+	            <th>Price(Ex)</th>
+	            <th class="disc">Disc %</th>
+	            <th>Vat</th>
+	            <th>Total(Incl)</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	        	{% for order_item in model_obj_set %}
+        		<tr>
+		            <td colspan="2" class="desc">{{order_item.description}}</td>
+		            <td class="code">{{order_item.item_code}}</td>
+		            <td class="qty">{{order_item.quantity_ordered}}</td>
+		            <td class="price">{{order_item.unit_price}}</td>
+		            <td></td>
+		            <td class="price">{{order_item.vat}}</td>
+		            <td class="price">{{order_item.total_price_incl}}</td>
+		         </tr>
+	        	{% endfor %}
+	          <tr style="border-top:1px solid #111; padding-top:10px">
+	            <td colspan="5"><b>BHP Allocation:</b> 
+	            	{% for allocation in prf_obj.allocation_set.all %}
+	            		{{allocation.bhp_allocation.name}}({{allocation.percentage}}%), 
+	            	{% endfor %}
+	            </td>
+	            <td colspan="2">Total (Excl)</td>
+	            <td align="center">{{overall_sum_excl|floatformat:2}}</td>
+	          </tr>
+	          <tr>
+	            <td colspan="5"></td>
+	            <td colspan="2">Vat</td>
+	            <td align="center">{{vat|floatformat:2}}</td>
+	          </tr>
+	          <tr>
+	            <td colspan="5"></td>
+	            <td colspan="2"><b>Total (Incl)</b></td>
+	            <td align="center"><b>{{overall_sum_incl|floatformat:2}}</b></td>
+	          </tr>
+	          <tr>
+	            <td colspan="5"></td>
+	            <td colspan="2">Discount</td>
+	            <td align="center">{{overall_disc|floatformat:2}}</td>
+	          </tr>
+	          <tr style="border-bottom:1px solid #111">
+	            <td colspan="5" class="terms">
+	            	Payment Terms: Buyer will pay the undisputed invoices in thirty (30) days
+	            	from date of receipt of the invoice.
+	            </td>
+	            <td colspan="2" style="border-top:1px solid #111"><b>Total (Incl)</b></td>
+	            <td align="center" style="border-top:1px solid #111"><b>{{overall_sum_incl|floatformat:2}}</td>
+	          </tr>
+	        </tbody>
+	     </table>
+    </main>
+    <footer>
+    	
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,351 @@
+{% extends 'edc_base/base.html' %}
+{% load procurement_dashboard_extras %}
+{% load static %}
+
+{% block extra-styles %}
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+	<link type="text/css" rel="stylesheet" href="{% static 'procurement_dashboard/css/dashboard.css' %}">
+{% endblock extra-styles %}
+{% block extra-scripts %}
+	<script type="text/javascript" charset="utf8" src="{% static 'procurement_dashboard/js/dashboard.js' %}"></script>
+{% endblock %}
+
+{% block main %}
+	
+<div class="container">
+<div class="col-md-12">
+	<div class="card row p-4">
+		<h4>General Information 
+		{% if not approved %}
+			<span class="badge badge-warning" style='background-color:#ffcc00'>
+				<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Pending authorisation(s)
+			</span>
+		{% else %}
+			<span class="badge badge-success" style='background-color:green'>
+				<i class="fa fa-check-circle" aria-hidden="true"></i> Authorised!
+			</span> 
+			
+		{% endif %}</h4>
+		<table class="table table-sm table-condensed small my-4">
+			<thead>
+				<tr>
+					<th>Order Number</th>
+					<th>Order Date</th>
+					<th>Vendor</th>
+					<th>Agent</th>
+					<th>BHP Allocation</th>
+					<th>Invoice Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>{{order_number}}</td>
+					<td>{{result.order_date}}</td>
+					<td>{{prf_obj.selected_vendor.name}}</td>
+					<td>{{result.agent.first_name|capfirst}} {{result.agent.last_name|capfirst}}</td>
+					<td>
+						{% for allocation in prf_obj.allocation_set.all %}
+	            			{{allocation.bhp_allocation.name}}({{allocation.percentage}}%), 
+	            		{% endfor %}
+					</td>
+					<td>
+						{% if purchase_invoice %}
+							{% if purchase_invoice.paid %}
+								Invoice Paid
+							{% else %}
+								{% if request.user|has_group:"Finance" and purchase_invoice.published %}
+									<form class='form-inline' method='POST' id="purchase_invoice" action="{% url 'procurement_dashboard:purchase_order_report_url'  order_number  %}" name="purchase_invoice">
+										{% csrf_token %}
+										<div class="form-group mx-sm-3" style="width:100px;">
+										  	<select class="form-control form-control-sm" id="invoice_status" name="invoice_status">
+										    	<option>Not Paid</option>
+										    	<option>Paid</option>
+										  	</select>
+										</div>
+										<button class="btn btn-primary btn-sm" type="submit" name="_update" value="update_status">
+							  				Update <i class="fa fa-sync"></i>
+							  			</button>
+									</form>
+								{% else %}
+									Not Paid
+								{% endif %}
+							{% endif %}
+						{% else %}
+							--
+						{% endif %}
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="col-md-8">
+	<div class="card row my-4 p-4">
+		<div class="row" id="report-controller">
+			<div class="col-sm-6">
+				<div class="d-inline-block">
+					<a class="btn btn-info btn-sm" id="download" href="{{result.file.url}}" download="{{result.file.url}}">
+						<i class="fa fa-download" aria-hidden="true"></i> Download
+					</a>
+					<button type="button" class="btn btn-info btn-sm" id="email" data-toggle="modal" data-target="#emailModal">
+						<i class="fa fa-envelope" aria-hidden="true"></i> Email
+					</button>
+					
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="d-inline-block pull-right">
+					{% if not purchase_invoice %}
+						<a class="btn btn-info btn-sm" id="download" disabled>
+							Send to Finance <i class="fa fa-share" aria-hidden="true"></i>
+						</a>
+					{% else %}
+						{% if not purchase_invoice.published %}
+							<form method='POST' id="purchase_invoice" action="{% url 'procurement_dashboard:purchase_order_report_url'  order_number  %}" name="purchase_invoice">
+								{% csrf_token %}
+								<div class="form-group">
+								  	<button class="btn btn-info btn-sm" type="submit" name="publish" value="publish">
+								  		Publish to Finance <i class="fa fa-share" aria-hidden="true"></i>
+								  	</button>
+								</div>
+							</form>
+						{% else %}
+							{% if request.user|has_group:"Finance" %}
+							  	<button class="btn btn-danger btn-sm" id="return" data-toggle="modal" data-target="#returnModal">
+							  		<i class="fa fa-times" aria-hidden="true"></i> Reject
+							  	</button>
+							{% endif %}
+							<a class="btn btn-info btn-sm" disabled>
+						  		Published <i class="fa fa-exclamation" aria-hidden="true"></i>
+						  	</a>
+						{% endif %}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<hr />
+		<div class="row" id="reports">
+			{% if pdf_images_bytes %}
+				{% for pdf_image_bytes in pdf_images_bytes %}
+					<div class="report">
+						<img src="data:image/png;base64,{{pdf_image_bytes}}" width='650px' height='950px'></img>
+					</div>
+				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+	
+	<!-- Email Modal -->
+	<div id="emailModal" class="modal fade" role="dialog">
+	  	<div class="modal-dialog">
+	
+	    <!-- content-->
+	    <div class="modal-content">
+	    	<div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        </div>
+	        <form action="{% url email_report_url %}"  method="post" id="email-form">
+				<div class="modal-body">
+					{% csrf_token %}
+					<input name="order_number" type="hidden" class="form-control" value="{{order_number}}" />
+		            <div class="form-group col-md-12">
+						<input name="sender_email" type="email" class="form-control" value="{{result.company.address.email}}" placeholder="From" required />
+		            </div>
+		            <div class="form-group col-md-12">
+						<input name="recipient_email" type="email" class="form-control" value="" placeholder="To" required />
+		            </div>
+		            <div class="form-group col-md-12">
+						<input name="subject" type="text" class="form-control" value="Purchase Order #{{order_number}}" placeholder="Subject" required />
+		            </div>
+		            <div class="form-group col-md-12">
+						<textarea name="message" type="textarea" class="form-control" placeholder="Message" required></textarea>
+		            </div>
+		            <div class="form-group col-md-12">
+		            	<i class="fa fa-paperclip" aria-hidden="true"></i> <a href="{{result.file.url}}">{{result.file.name}}</a>
+		            </div>
+	            	<div class="clearfix"></div>
+	        	</div>
+	        	<div class="modal-footer">
+	            	<input type="submit" class="btn btn-success" id="email-button" value="Email" />
+	            	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        	</div>
+	        </form>
+	   </div>
+	 </div>
+	</div>
+	
+	<!-- Return Modal -->
+	<div id="returnModal" class="modal fade" role="dialog">
+	  	<div class="modal-dialog">
+	
+	    <!-- content-->
+	    <div class="modal-content">
+	    	<div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        </div>
+	        <form method='POST' id="purchase_invoice" action="{% url 'procurement_dashboard:purchase_order_report_url'  order_number  %}" name="purchase_invoice">
+				<div class="modal-body">
+					{% csrf_token %}
+					<input name="prf_number" type="hidden" class="form-control" value="{{prf_obj.prf_number}}" />
+					<input name="return" type="hidden" class="form-control" value="True" />
+		            <div class="form-group col-md-12">
+						<textarea name="reasons" type="textarea" class="form-control" placeholder="Reasons" required></textarea>
+		            </div>
+	            	<div class="clearfix"></div>
+	        	</div>
+	        	<div class="modal-footer">
+	            	<input type="submit" class="btn btn-danger" id="return-button" value="Reject" />
+	            	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        	</div>
+	        </form>
+	   </div>
+	 </div>
+	</div>
+	</div>
+	<!-- Dash board panels -->
+	<div class="col-md-4">
+		<!-- Begin authorization panel -->
+		 <div class="row p-4">
+            <div class="panel panel-info">
+                <div class="panel-heading clickable">
+                    <span class="glyphicon glyphicon-check" style="background:none;padding:0px;"></span> Authorization (s)
+                    <div>
+                    	<span class="pull-right"><i class="glyphicon glyphicon-minus"></i></span>
+                    </div>
+                </div>
+                <div class="panel-body">
+                	<ul class="list-group">
+                	{% if prf_obj.request_by.username == user.get_username %}
+                		{% if not auth_one_request %}
+	                		<li class="list-group-item">
+	                			Authorization 1: <a href="{{ add_request_href }}">Request</a>
+	                		</li>
+	                	{% else %}
+	                		<li class="list-group-item">
+	                			Authorization 1: 
+	                			<a href="{{ auth_one_request.href }}">Request {{auth_one_request.status}}</a>
+	                		</li>
+	                	{% endif %}
+                		{% if overall_sum_incl > 5000.0 %}
+	                		{% if not auth_two_request %}
+		                		<li class="list-group-item">
+		                			Authorization 2: <a href="{{ add_request_href }}">Request</a>
+		                		</li>
+		                	{% else %}
+		                		<li class="list-group-item">
+		                			Authorization 2: 
+		                			<a href="{{ auth_two_request.href }}">Request {{auth_two_request.status}}</a>
+		                		</li>
+		                	{% endif %}
+	                	{% endif %}
+                	{% elif result.first_approver.username == user.get_username and auth_one_request.status == 'pending' %}
+                		<li class="list-group-item">
+                			Authorization 1: <a href="{{ auth_one_request.href }}">Review</a>
+                		</li>
+                	{% elif result.second_approver.username == user.get_username and auth_two_request.status == 'pending' %}
+                		<li class="list-group-item">
+                			Authorization 2: <a href="{{ auth_two_request.href }}">Review</a>
+                		</li>
+                	{% elif auth_one_request or auth_two_request %}
+                		<li class="list-group-item">
+                			Authorization 1: {{result.first_approver.first_name|default:"None"}} {{result.first_approver.last_name|default:"None"}}
+                		</li>
+                		<li class="list-group-item">
+                			Authorization 2: {{result.second_approver.first_name|default:"None"}} {{result.second_approver.last_name|default:"None"}}
+                		</li>
+                	{% endif %}
+                	</ul>
+                </div>
+            </div>
+    	</div>
+    	<!-- End authorization panel -->
+    	<!-- Begin relatted forms -->
+		<div class="row p-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-folder-open"></span> Related forms
+                </div>
+                <div class="panel-body">
+                    <ol class="list-group">
+                        <li class="list-group-item">
+                            <div class="grn">
+                                {% goods_received_note_button wrapped_purchase_order %}
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="invoice">
+                                {% purchase_invoice_button wrapped_purchase_order %}
+                            </div>
+                        </li>           
+                    </ol>
+                </div>
+	        </div>
+	    </div>
+	   	<!-- End related forms -->
+		<!-- Begin other document links -->
+		<div class="row p-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-list"></span> Other Form Links
+                    <div class="pull-right action-buttons">
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-cog" style="margin-right: 0px;"></span>
+                            </button>
+                            <ul class="dropdown-menu slidedown">
+                            	<li><a href=""><span class="fa fa-cogs"></span> Generate All</a></li>
+                                <li><a href=""><span class="glyphicon glyphicon-download"></span> Download All</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group" id="forms">
+                        <li class="list-group-item">
+                            <div class="checkbox">
+                                <input type="checkbox" id="checkbox" />
+                                <label for="checkbox">
+                                    <a href="{{wrapped_prf.href}}">Purchase Requisition</a>
+                                </label>
+                            </div>
+                            <div class="pull-right action-buttons">
+                                <a href=""><span class="glyphicon glyphicon-download"></span></a>
+                            </div>
+                        </li>
+                        {% if wrapped_justification %}
+                         <li class="list-group-item">
+                            <div class="checkbox">
+                                <input type="checkbox" id="checkbox" />
+                                <label for="checkbox">
+                                    <a href="{{wrapped_justification.href}}">Vendor Justification</a>
+                                </label>
+                            </div>
+                            <div class="pull-right action-buttons">
+                                <a href=""><span class="glyphicon glyphicon-download"></span></a>
+                            </div>
+                        </li>
+                        {% endif %}           
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div>
+                            <h6>
+                                Total Count <span class="label label-info" id="forms-count"></span>
+                                <script>
+	                                $(document).ready(function () {
+	                                	$("#forms-count").append($("#forms li").length);
+	                                });
+                                </script>
+                           </h6>
+                        </div>
+                    </div>
+                </div>
+	        </div>
+	    </div>
+	   	<!-- End other document links -->
+	</div>
+</div>
+
+
+{% endblock main %}

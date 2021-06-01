@@ -1,0 +1,9 @@
+ <a id="purchaseinvoice_add_{{ order_number }}" title="{{ title }}" href="{{ add_purchase_invoice_href }}"
+ 	{% if purchase_invoice_model_obj %} style='color:green;' {% endif %}>
+ 	Purchase Invoice
+ </a>
+ {% if purchase_invoice_model_obj %}
+ 	<span class="badge badge-success pull-right" style='background-color:green'>KEYED</span> 
+ {% else %}
+ 	<span class="badge badge-success pull-right" style='background-color:#259AD0'>NEW</span> 
+ {% endif %}

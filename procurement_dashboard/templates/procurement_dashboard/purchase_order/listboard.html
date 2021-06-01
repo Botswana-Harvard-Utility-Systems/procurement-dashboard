@@ -1,0 +1,122 @@
+{% extends listboard_base_template %}
+{% load admin_urls %}
+{% load edc_base_extras %}
+{% load procurement_dashboard_extras %}
+{% load edc_dashboard_extras %}
+{% load static %}
+
+{% block extra-css %}
+{{ block.super }}
+	<link href="{% static 'procurement_dashboard/css/listboard.css' %}"rel=stylesheet>
+	<link href="{% static 'procurement_dashboard/css/bootstrap/bootstrap-table.min.css' %}"rel=stylesheet>
+{% endblock extra-css %}
+
+
+{% block extra-scripts %}
+{{ block.super }}
+	<script src="{% static 'procurement_dashboard/js/bootstrap/bootstrap-table.min.js' %}"></script>
+	<script src="{% static 'procurement_dashboard/js/bootstrap/bootstrap-table-filter-control.min.js' %}"></script>
+{% endblock %}
+
+{% block main %}   
+<!-- Filter pills -->
+{% if listboard_view_filters %}
+  <ul class="nav nav-pills nav-justified" id='filters'>
+    {% for listboard_filter in listboard_view_filters %}
+	    <li class="{% if f == listboard_filter.name or e == listboard_filter.name %} active {% endif %}">
+	    	<a href="{% url listboard_filter_url %}?{{ listboard_filter.querystring }}">
+	    		{{ listboard_filter.label }}{% if f == listboard_filter.name or e == listboard_filter.name %}&nbsp;<i class="fa fa-check fa-fw"></i>{% endif %}
+	    	</a>
+	    </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<div class="row">
+	<div id="toolbar">
+		<h3 style='font-weight:300;font-size: 32px;'>
+			<span class="iconify" data-icon="fa-solid:check-double" data-inline="false"></span> Purchase Orders
+		</h3>
+	</div>
+</div>
+
+<!-- begin table -->
+<div class="table table-responsive">
+<table 	class="table table-hover table-striped small" style="border-top:3px solid #cecece"
+		data-toggle="table"
+		data-toolbar="#toolbar"
+		data-toolbar-align="left"
+		data-filter-control="true"
+		data-show-columns="true"
+  		data-show-columns-toggle-all="true"
+		data-show-fullscreen="true"
+		data-pagination="true"
+ >
+<thead style="background-color:#F0F8FF">
+
+{% block listboard_table_header %}
+    <!-- begin results header -->
+    <th>#</th>
+    <th data-field='order_number' data-sortable='true' data-filter-control="input">Order Number</th>
+    <th data-field='order_date' data-sortable='true' data-filter-control="input" data-width="100" data-align="center">Order Date</th>
+    <th data-field='agent' data-sortable='true' data-filter-control="input">Agent</th>
+    <th data-field='allocation' data-sortable='true' data-filter-control="input">BHP Allocation</th>
+    <th>Authorised</th>
+    <th>Total</th>
+    <th>Invoice Status</th>
+    <!-- end results header -->
+{% endblock listboard_table_header %}
+
+</thead><tbody>
+
+{% block listboard_table_body %}
+
+    {% for result in results %}
+        <tr>
+		{% block listboard_table_button_column %}
+		 <td style="white-space: nowrap">
+		    <div class="btn-group">
+		 		{% purchase_order_button result %}
+		 		<a id="btn-dashboard" class="btn btn-success btn-sm" role="button"
+		     		title="Generate PDF" href="{% url purchase_order_report_url result.order_number %}">
+		     		<i class="fa fa-eye"></i> View Documents
+		     	</a>
+		    
+		    </div>
+		 </td>
+		{% endblock listboard_table_button_column %}
+
+		{% block listboard_table_columns %}
+		    <td nowrap>{{result.order_number}}</td>
+		    <td nowrap>{{result.order_date}}</td>
+		    <td nowrap>{{result.object.agent.first_name}} {{result.object.agent.last_name}}</td>
+		    <td nowrap>{{result.bhp_allocation}}</td>
+		    <td nowrap>{{result.authorised|default:"--"}}</td>
+		    <td nowrap><b>P</b> {{result.purchase_items_total}}</td>
+		    <td nowrap>{{result.invoice_status}}</td>
+		{% endblock listboard_table_columns %}
+		</tr>
+    {% endfor %}
+{% endblock listboard_table_body %}
+
+</tbody>
+</table>
+
+<!-- begin spacer rows -->
+<table>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td></tr>
+</table>
+<!-- end spacer rows -->
+
+</div><!-- end table -->
+
+{% paginator_row %}
+
+</div>  <!--end panel -->
+</div> <!--end panel-group -->
+<!-- end listboard main block -->
+{% endblock main %}
